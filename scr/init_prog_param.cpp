@@ -1,6 +1,6 @@
 //#include "StdAfx.h"
 #pragma unmanaged
-#include "..\include\init_prog_param.h"
+#include "init_prog_param.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>

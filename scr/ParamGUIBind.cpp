@@ -1,4 +1,4 @@
-#include "..\include\ParamGUIBind.hpp" 
+#include "ParamGUIBind.hpp" 
 
 namespace ParamGUIBind 
 {
