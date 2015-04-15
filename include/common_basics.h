@@ -1,3 +1,12 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file ProgParam\include\common_basics.h
+*
+* @brief 
+*/
+
 // Definiciones y declaraciones basicas. A usar por todos, user interface and programs. Primaria?, no depende? de nadie?.
 #ifndef _COMMON_BASIC_H
 #define _COMMON_BASIC_H
@@ -105,15 +114,17 @@ private:
 
 template <class Num>
 class NumRang				// ------------------------------------------------------------------- NumRang<Numeric>	-----------------
-{public: 
-	NumRang(					  ):min(0 ),			max(0 ){} 
+{	
+    Num min{}, max{} ; 
+public: 
+	NumRang(					  )                            {} 
 	NumRang(		Num av		  ):min(av),			max(av){}
 	NumRang(Num mi,         Num ma):min(mi),			max(ma){}
 
-	void Set(					   ){min=0 			;max=0	;}
-	void Set(		Num av		   ){min=av			;max=av ;}
-	void Set(Num mi,         Num ma){min=mi			;max=ma ;}
-	void Set(     NumRang    R     ){min=R.min		;max=R.max;}
+	void Set(					   ){min=0 			; max =0   ;}
+	void Set(		Num av		   ){min=av			; max =av  ;}
+	void Set(Num mi,         Num ma){min=mi			; max =ma  ;}
+	void Set(     NumRang    R     ){min=R.min		; max=R.max;}
 
 	void SetMin(Num mi			   ){min=mi;			    }
 	void SetMax(			 Num ma){				max=ma ;}
@@ -139,8 +150,6 @@ class NumRang				// ------------------------------------------------------------
 
 	bool UpdateMin(Num mi){ return (mi<min) ? min=mi, true : false ;}
 	bool UpdateMax(Num ma){ return (ma>max) ? max=ma, true : false ;}
-private: 
-	Num min,max; 
 };
 
 template <class Num>
