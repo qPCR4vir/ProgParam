@@ -225,8 +225,8 @@ protected:
     {
         CUnit("g"       , 0.001 , "kg"   , "Mass"       );
         CUnit("g"       , 1000  , "mg"                  );
-        CUnit("mg"      , 1000  , "痢"                  );
-        CUnit("痢"      , 1000  , "ng"                  );
+        CUnit("mg"      , 1000  , u8"痢"                );
+        CUnit(u8"痢"      , 1000  , "ng"                  );
         CUnit("ng"      , 1000  , "pg"                  );
         CUnit("pg"      , 1000  , "fg"                  );
         CUnit("tone"    , 1000  , "kg"                  );
@@ -235,8 +235,8 @@ protected:
         CUnit("mol"     , 1     , ""     , "Amount"     );
         CUnit("mol"     , No    , "cop"                 );
         CUnit("mmol"    , 0.001 , "mol"                 );
-        CUnit("痠ol"    , 0.001 , "mmol"                );
-        CUnit("nmol"    , 0.001 , "痠ol"                );
+        CUnit(u8"痠ol"    , 0.001 , "mmol"                );
+        CUnit("nmol"    , 0.001 , u8"痠ol"                );
         CUnit("pmol"    , 0.001 , "nmol"                );
         CUnit("fmol"    , 0.001 , "pmol"                );
         CUnit("amol"    , 0.001 , "fmol"                );
@@ -246,9 +246,9 @@ protected:
         CUnit("particle", 1     , "cop"                 );
         CUnit("cd"      , 1     , ""     , "Luminosity" );
         CUnit("K"       , 1     , ""     , "Temperature");
-        CUnit("蚓",conversion(1, 273.15), "K"           );
-        CUnit("蚓",conversion(1.8, 32),  "蚌"           );
-        //CUnit("蚓"      , 1     , "grC"               );
+        CUnit(u8"蚓",conversion(1, 273.15), "K"           );
+        CUnit(u8"蚓",conversion(1.8, 32),  u8"蚌"           );
+        //CUnit(u8"蚓"      , 1     , "grC"               );
         CUnit("s"       , 1     , "s"    , "Time"       );
         CUnit("s"      , 1000   , "ms"                  );
         CUnit("min"     , 60    , "s"                   );
@@ -258,11 +258,12 @@ protected:
         CUnit("year"    , 365   , "day"                 );
         CUnit("L"       , 1     , ""    , "Volumen"     );
         CUnit("L"       , 1000  , "mL"                  );
-        CUnit("mL"      , 1000  , "無"                  );
+        CUnit("mL"      , 1000  , u8"無"                  );
         CUnit("m3"      , 1000  , "L"                   );
         CUnit("dm3"     , 1     , "L"                   );
         CUnit("cm3"     , 1     , "mL"                  );
-        CUnit("mm3"     , 1     , "無"                  );
+        CUnit("mm3"     , 1     , u8"無"                  );
+        CUnit("mm3"     , 1     , u8"無"                  );
         CUnit("m"       , 1     , ""    , "Length"      );
         CUnit("km"      , 1000  , "m"   , "Length"      );
         CUnit("dm"      , .1    , "m"                   );
@@ -286,20 +287,20 @@ protected:
         CUnit("kb"      , 1000  , "bp"    , "GeneLength");
         //CUnit("M"       , 1     , ""    , "molarity"  );
         CUnit("M"       , No    , "cop/L" ,"molarity"   );
-        CUnit("cop/無"  , 1000  , "cop/L"               );
+        CUnit(u8"cop/無"  , 1000  , "cop/L"               );
         CUnit("M"       , 1     , "mol/L"               );
         CUnit("M"       , 1000  , "mM"                  );
-        CUnit("mM"      , 1000  , "然"                  );
-        CUnit("然"      , 1     , "痠ol/L"              );
-        CUnit("然"      , 1000  , "nM"                  );
+        CUnit("mM"      , 1000  , u8"然"                  );
+        CUnit(u8"然"      , 1     , u8"痠ol/L"              );
+        CUnit(u8"然"      , 1000  , "nM"                  );
         CUnit("nM"      , 1000  , "pM"                  );
         CUnit("pM"      , 1000  , "fM"                  );
-      //CUnit("pM"      , 1     , "痠ol/L"              );
-        CUnit("痠ol/L"  , 1     , "pmol/無"             );
+      //CUnit("pM"      , 1     , u8"痠ol/L"              );
+        CUnit(u8"痠ol/L"  , 1     , u8"pmol/無"             );
         CUnit("mg/L"    , 1000  , "g/L" ,"concentration");
-        CUnit("痢/L"    , 1000  , "mg/L"                );
+        CUnit(u8"痢/L"    , 1000  , "mg/L"                );
         CUnit("g/mL"    , 1000  , "g/L"                 );
-        CUnit("pg/無"   , 1     , "痢/L"                );
+        CUnit(u8"pg/無"   , 1     , u8"痢/L"                );
 
         return true;
     }
