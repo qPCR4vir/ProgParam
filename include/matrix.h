@@ -1,3 +1,27 @@
+/**
+* ProgParam - manage subprograms & programs parameters:
+*             definitions & I/O from projects files or UI
+* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+*
+*    This program is free software : you can redistribute it and / or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.If not, see <http://www.gnu.org/licenses/>.
+*
+*  @file  ProgParam\include\matrix.h
+*  @brief
+*  @autor Ariel Vina-Rodriguez (qPCR4vir)
+*/
+
+
 //   matrix.h     :   La declaracion y la definicion de funciones miembros de template class TIENEN que estar en el mismo file
 	//Because templates are compiled when required, this forces a restriction for multi-file projects: 
 	//the implementation (definition) of a template class or function must be in the same file as its declaration. 
@@ -15,11 +39,10 @@
 #include <vector>
 #include <string>
 #include "common_basics.h"
-//using  std::string;
 
-	typedef int index;	
+	using index = int ;	
 
-		template <typename Num>
+	template <typename Num>
 class CMatrix_RA
 {public:
     using index   = ::index;
