@@ -475,6 +475,35 @@ public:
     }
 };
 
+struct quantity
+{
+	double     value;
+	unit_name  unit;
+
+	quantity(double value, unit_name  unit) : value{ value }, unit{ unit }
+	{
+		if (!unit_exist(unit))
+			throw UnitError(unit + " - this is not the name of a defined unit: error during quantity definition");
+	}
+
+	void convert_into(unit_name  new_unit)
+	{
+		value = CUnit(unit, new_unit).conv(value);
+		unit = new_unit;
+	}
+
+	double value_in(unit_name  other_unit) const
+	{
+		return CUnit(unit, other_unit).conv(value);
+	}
+
+	quantity get_in(unit_name  other_unit) const
+	{
+		quantity re{ *this };
+		re.convert_into(other_unit);
+		return re;
+	}
+};
 
 } // namespace Units
 
