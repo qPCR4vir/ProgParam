@@ -1,7 +1,7 @@
 /**
 * ProgParam - manage subprograms & programs parameters:
 *             definitions & I/O from projects files or UI
-* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2016, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *    This program is free software : you can redistribute it and / or modify
 *    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,12 @@
 #include <Units.hpp>
 #include <iostream> 
 
+
+namespace RTunits
+{
+
+bool UnitError::use_throw{ true };
+//bool UnitError::use_throw{ false };
 
 
 double ide(double ori){return ori;}
@@ -97,11 +103,13 @@ void CUnit::add()
                 conv=conversion(1);
             } else 
                 if (base!=name)  
-                    CUnit(base,1,base,magnitude);// Creo Primero la base, como base
+                    CUnit(base,1,base,magnitude);// Create first the base, as base
 
-        // Luego la nueva Unit
+        // then the new Unit
     error=false ;
     _Units[name]=*this;
     _Magnitudes[magnitude].insert(name);
 
 }
+
+} // namespace Units

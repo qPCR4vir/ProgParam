@@ -16,8 +16,10 @@
 *    You should have received a copy of the GNU General Public License
 *    along with this program.If not, see <http://www.gnu.org/licenses/>.
 *
-*  @file  ProgParam\include\Units.hpp
-*  @brief
+*  @file  Run-time implementation of the concept of units and conversion betwen units or relations between different magnitudes, like molarity and mass concentration for an specific substance.
+*  @detail This small library was designed for convenience: easy of use and of extention, not for high performance. 
+*   For almost cero-runtime overhead and compile-time detection of errors you may consider boost unit or similar, 
+*   for which this library is NOT a replacement of any kind.
 *  @autor Ariel Vina-Rodriguez (qPCR4vir)
 */
 
@@ -32,12 +34,23 @@
 #include <assert.h>
 #include <exception>
 
+namespace RTunits  ///< Run-Time defined magnitude untis, convertions, quantities and relations
+{ 
 
-class CUnit;
+	class CUnit;
 
-std::ostream& operator<<( std::ostream& o, const CUnit& u);
+	using unit_name          = std::string;
+	using magnitude_name     = std::string;
+	using magnitude_t        = std::set<unit_name>;
+	using units              = std::map<unit_name,      CUnit      >;
+	using magnitudes         = std::map<magnitude_name, magnitude_t>;
+	using nonLinealFunction  = std::function <double(double)>;
 
-/// Converting Units (not necessarily linearly)
+	inline bool  unit_exist(const unit_name& n) noexcept;
+	inline bool  compatible(const unit_name& name_, const unit_name& base_);
+	/// mainly for debuging.
+	std::ostream& operator<<(std::ostream& o, const CUnit& u);
+
 
 struct UnitError :  std::runtime_error
 {
@@ -58,6 +71,8 @@ struct UnitError :  std::runtime_error
 		std::cerr << what();
 	}
 };
+
+/// Converting Units (not necessarily linearly), representing the definition of the unit which are all registered.
 class CUnit
 {
   public:   
@@ -71,10 +86,10 @@ class CUnit
     /// An option between a linear or a general function to actually perform the conversion
     struct conversion
     {
-        double              c{ 1.0 }, s{ 0.0 };
-        bool                linear{ true };
-        nonLinealFunction   nlc{ _identity } ;
-        conversion() 
+        double              c{ 1.0 }, s{ 0.0 };  ///<   u2 = c*u1 + s
+        bool                linear{ true };      ///<  \deprecate ?
+        nonLinealFunction   nlc{ _identity } ;   ///< arbitrary non linear conversion \todo use to flag linear? 
+
         {};
         conversion(double c_  , double s_=0)            :c(c_),s(s_) 
         {};
@@ -85,7 +100,7 @@ class CUnit
             if (linear && rc.linear)
                 return conversion (rc.c*c, c*rc.s+s);
             if (linear )
-                return conversion (rc.c*c, c*rc.s+s, rc.nlc);
+                return conversion (rc.c*c, c*rc.s+s, rc.nlc); /// first apply linear and then nlc?
             if (rc.linear )
                 return conversion (c,s, [rc,this](double b){return nlc(rc.c*b+rc.s);});
 
@@ -174,16 +189,19 @@ protected:
     {
         add();
     }
-    /// Create and DEFINE a new conversion: -the same but for "proporcional" units
+
+	/// Create and DEFINE a new conversion: -the same but for "proportional" units
     CUnit(  const unit_name& name_,  
             double           k_   ,   
             const unit_name& base_,   
             magnitude_name   magnitude_=""  )    : CUnit(name_, conversion(k_), base_, magnitude_)
     {
     }
-    CUnit(){}
 
-    /// create a Convertion from=name, to=base using existing information from the other previos defined convertions
+    CUnit()
+	{}
+
+    /// create a Conversion from=name, to=base using existing information from others, previosly defined conversions
     CUnit(const unit_name& from, const unit_name& to)   
         : name(from), base(to), error(true)
     {
@@ -204,7 +222,7 @@ protected:
         if (from==to)       
         {     
             error=false;     
-            return ;       // the conv was def init to be 1.
+            return ;       // the conv was defaultly initialize to be 1.
         }
         
 
@@ -239,7 +257,7 @@ protected:
             if (c_to == from)       // We arrived !! we have U(to,from) inverted
             {     
                 error=false; 
-                conv.invert();          
+                conv.invert(&error);
                 return ;               ///  ...--------- to --------- from ---------...
             } 
             //onv = conv * _Units[c_from].conv;
@@ -254,19 +272,19 @@ protected:
         if (! conv.linear )   /// \todo what if nonlinear? find the inverse definition?
             return;        
 
-        conv=c2bu1*conv.inverted();    /// \todo This order is very important?? is correct??  TEST !!!!
-        error=false;
-
-
+        conv=c2bu1*conv.inverted(&error);    /// \todo This order is very important?? is correct??  TEST !!!!
     }
-    /// dont do anything but prepare for future use, remembering some reference unit
+
+	/// dont do anything but prepare for future use, remembering some reference unit
     CUnit(const unit_name& from):CUnit(from,from){}
-    /// return another convertion, from our present "origen" to "onother base", or just to another unit
+
+	/// return another convertion, from our present "origen" to "onother base", or just to another unit
     CUnit to(const unit_name& to)
     {
         return CUnit(name,to);
     }
-    /// return another convertion, to our present "origen" from "onother base", or just to another unit
+
+	/// return another convertion, to our present "origen" from "onother base", or just to another unit
     CUnit from(const unit_name& to)
     {
         return CUnit(to,name);
@@ -448,6 +466,8 @@ public:
     }
 };
 
+
+} // namespace Units
 
 
 #endif 
