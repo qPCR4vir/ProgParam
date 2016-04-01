@@ -34,16 +34,16 @@ bool UnitError::use_throw{ true };
 
 double ide(double ori){return ori;}
 
-CUnit::nonLinealFunction    CUnit::_identity(ide);
-CUnit::units                CUnit::_Units ;
-CUnit::magnitudes           CUnit::_Magnitudes;
-bool                        CUnit::_initialized = CUnit::Initialize();
-const double                CUnit::No=6.02e23;
+nonLinealFunction    CUnit::_identity(ide);
+units                CUnit::_Units ;
+magnitudes           CUnit::_Magnitudes;
+bool                 CUnit::_initialized = CUnit::Initialize();
+const double         CUnit::No=6.02e23;
 
 
 std::ostream& operator<<( std::ostream& o, const CUnit& u)
 {
-   o << "Unit: "<< u.name << " = "<< u.conv.c << " "  ;
+   o << "Unit: 1 "<< u.name << " = "<< u.conv.c << " "  ;
 
    if (! u.conv.linear)        o << " x nonlineal function of " ;
 
@@ -58,7 +58,7 @@ std::ostream& operator<<( std::ostream& o, const CUnit& u)
 
 void CUnit::add()
 {
-    if(name=="")
+    if(name=="" && magnitude !="dimensionless")
     {    
 		throw UnitError(to_string()+ "\n We need a new unit name in order to create a new unit. ");
         return;

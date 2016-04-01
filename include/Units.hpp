@@ -76,13 +76,6 @@ struct UnitError :  std::runtime_error
 class CUnit
 {
   public:   
-    typedef std::string                             unit_name       ;
-    typedef std::string                             magnitude_name  ;
-    typedef std::set<unit_name>                     magnitude_t     ;
-    typedef std::map<unit_name     , CUnit      >   units           ;
-    typedef std::map<magnitude_name, magnitude_t>   magnitudes      ;
-    typedef std::function <double(double)>          nonLinealFunction;
-
     /// An option between a linear or a general function to actually perform the conversion
     struct conversion
     {
@@ -90,12 +83,21 @@ class CUnit
         bool                linear{ true };      ///<  \deprecate ?
         nonLinealFunction   nlc{ _identity } ;   ///< arbitrary non linear conversion \todo use to flag linear? 
 
+	
+        conversion() noexcept	                            ///< an identity conversion
         {};
-        conversion(double c_  , double s_=0)            :c(c_),s(s_) 
+        
+		conversion(double c_  , double s_=0.0) noexcept   	///< a linear conversion     
+			:c(c_),s(s_)
         {};
-        conversion(double c_, double s_,const nonLinealFunction& nlc_):c(c_),s(s_), nlc(nlc_)  , linear(false) 
+
+		/// a general conversion - first apply linear and then nlc \todo conversion( const nonLinealFunction& nlc_ )   ??
+        conversion(double c_, double s_,const nonLinealFunction& nlc_) noexcept 
+			:c(c_),s(s_), nlc(nlc_)  , linear(false) 
         {};
-        conversion operator*(const conversion& rc) const
+
+		/// concatene two arbitrary convertions
+        conversion operator*(const conversion& rc) const 
         { 
             if (linear && rc.linear)
                 return conversion (rc.c*c, c*rc.s+s);
@@ -147,6 +149,7 @@ class CUnit
             return c*nlc(ori_val)+s;
         }
     } ;
+
     conversion      conv ;
     unit_name       name, base=unit_name{name};
     magnitude_name  magnitude ;
@@ -194,7 +197,8 @@ protected:
     CUnit(  const unit_name& name_,  
             double           k_   ,   
             const unit_name& base_,   
-            magnitude_name   magnitude_=""  )    : CUnit(name_, conversion(k_), base_, magnitude_)
+            magnitude_name   magnitude_=""  )    
+		: CUnit(name_, conversion(k_), base_, magnitude_)
     {
     }
 
@@ -227,14 +231,15 @@ protected:
         
 
         ///  ...--------- from ----------------->
-        unit_name  c_from, c_to;
-        //conv=_Units[from].conv;
-        for (c_from=from, c_to=_Units[from].base;   // current from and to taken from the first unit and it base
+
+        unit_name  c_from, c_to;           //conv=_Units[from].conv;
+
+        for (c_from=from, c_to=_Units[from].base;              // current from and to taken from the first unit and it base
                             c_from != c_to;                    // upps, tupik in this direction no more convertions, dont walk more
                                 c_to=_Units[c_from=c_to].base) // walk to the next convertion
         {
-            conv = _Units[c_from].conv * conv;     /// This order is very important
-            if (c_to == to)       // We arrived !! we have U(from,to)
+            conv = _Units[c_from].conv * conv;       //  This order is very important
+            if (c_to == to)                          // We arrived !! we have U(from,to)
             {     
                 error=false;     
                 return ;               ///  ...--------- from --------- to ---------...
@@ -246,10 +251,12 @@ protected:
 
 
         ///  ...--------- to ----------------->
+
         conv=conversion(); //_Units[to].conv;
-        for ( c_from=to, c_to=_Units[to].base;   // current from and to taken from the first unit and it base
-                            c_from != c_to;                    // upps, tupik in this direction no more convertions, dont walk more
-                                c_to=_Units[c_from=c_to].base) // walk to the next convertion
+
+        for ( c_from=to, c_to=_Units[to].base;          // current from and to taken from the first unit and it base
+                               c_from != c_to;          // upps, tupik in this direction no more convertions, dont walk more
+                c_to=_Units[c_from=c_to].base  )        // walk to the next convertion
         {
             if (! conv.linear )   /// \todo what if nonlinear? find the inverse definition?
                 return;            
@@ -445,8 +452,8 @@ public:
             CUnit rl(name_, base ), rr(name ,base_);
             if (!rl.error && !rr.error )
             {  
-               u.conv=rl.conv * conv.inverted()  * rr.conv ;
-               u.error = false;
+               u.conv=rl.conv * conv.inverted( &(u.error) )  * rr.conv ;
+               
             }
         }
         return u;
