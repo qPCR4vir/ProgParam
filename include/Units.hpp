@@ -153,42 +153,14 @@ class CUnit
     conversion      conv ;
     unit_name       name, base=unit_name{name};
     magnitude_name  magnitude ;
-    bool            error{true};
-    static const magnitudes& MagnitudesDic() {return _Magnitudes;}
-    static const units     & UnitsDic     () {return _Units     ;}
+    bool            error{true};   ///< \todo keep ? or throw?
 
-    static bool       unit_exist(const unit_name& n)
-    {  
-        return _Units.find(n)!= _Units.end();  
-    }
-    static bool       magnitude_exist(const unit_name& m)
-    {  
-        return _Magnitudes.find(m)!= _Magnitudes.end();  
-    }
-    std::string       to_string() const
-    {
-        std::ostringstream o;
-        o << *this;
-        return o.str();
-    }
-protected:
-    static bool  _compatible(const unit_name& name_, const unit_name& base_)
-    {
-        return UnitsDic().at(name_ ).magnitude == UnitsDic().at(base_).magnitude ; 
-    }
-  private:
-    static units                _Units ;
-    static magnitudes           _Magnitudes;
-    static nonLinealFunction    _identity;
-    static bool                 _initialized;
-    void add();
-
-  public:
-    /// Create and DEFINE a new conversion: define a "new" "name" unit from another, the base, adding self to a general list of conversion and if needed add new units and the magnitude.
-    CUnit(const unit_name& name_,  
+    /// Create and DEFINE a new conversion: define a "new" "name" unit from another, the base, adding self to a general list of conversions and if needed add new units and even the magnitude.
+    CUnit( const unit_name& name_,  
            const conversion& conv_,   
            const unit_name& base_,   
-           magnitude_name magnitude_=""): name(name_), base(base_), magnitude(magnitude_), conv(conv_)
+           magnitude_name magnitude_="")
+		: name(name_), base(base_), magnitude(magnitude_), conv(conv_)
     {
         add();
     }
@@ -297,20 +269,18 @@ protected:
         return CUnit(to,name);
     }
 
-    //for{ unit_name un=name ;  _Units[un].base != un ; un=_Units[un].base)
-        //{
-        //   conv=conv*_Units[un].conv;
-        //   un=_Units[un].base;
-        //if ( un== base)
-        //{    
-        //    *this= _Units[name];
-        //    error=false;
-        //    return ;
-        //}
-        //if (_Units[name].base== name)
-        //CUnit u();
-    
-    static const double No;
+	std::string       to_string() const
+	{
+		std::ostringstream o;
+		o << *this;
+		return o.str();
+	}
+
+	friend inline const magnitudes& MagnitudesDic() noexcept;
+	friend inline const units     & UnitsDic() noexcept;
+
+    static const double No;   // ?
+	 
     static bool Initialize()
     {
         CUnit("g"       , 0.001 , "kg"   , "Mass"       );
@@ -394,7 +364,39 @@ protected:
 
         return true;
     }
+
+  protected:
+	  /// units of the same magnitude are compatible, but may be still (yet) non convertible , or the convertion may be unknow \todo make public?
+
+  private:
+	  static units                _Units;
+	  static magnitudes           _Magnitudes;
+	  static nonLinealFunction    _identity;      ///<  ??
+	  static bool                 _initialized;   ///<  ??
+	  void add();
 };
+
+
+inline const magnitudes& MagnitudesDic() noexcept { return CUnit::_Magnitudes; }
+inline const units     & UnitsDic() noexcept { return CUnit::_Units; }
+
+inline bool  unit_exist(const unit_name& n) noexcept
+{
+	return UnitsDic().find(n) != UnitsDic().end();
+}
+
+inline bool  magnitude_exist(const unit_name& m) noexcept
+{
+	return MagnitudesDic().find(m) != MagnitudesDic().end();
+}
+
+/// will throw if one of the unit don't exist
+inline bool  compatible(const unit_name& name_, const unit_name& base_)
+{
+	return UnitsDic().at(name_).magnitude == UnitsDic().at(base_).magnitude;
+}
+
+
 
 class Relation : public CUnit
 {
@@ -437,7 +439,7 @@ public:
         //    if (!u.error)
         //        return u;
         //} 
-        if ( _compatible(name_, name) && _compatible(base,base_) )
+        if ( compatible(name_, name) && compatible(base,base_) )
         {
             CUnit l(name_, name), r(base,base_);
             if (!l.error && !r.error )
@@ -447,7 +449,7 @@ public:
                return u;
             }
         }
-        if ( _compatible(name_, base ) && _compatible(name ,base_) )
+        if ( compatible(name_, base ) && compatible(name ,base_) )
         {
             CUnit rl(name_, base ), rr(name ,base_);
             if (!rl.error && !rr.error )
@@ -464,7 +466,7 @@ class MW
   Relation m,c;
 public:
     MW(double mw):m("mol",mw,"g"),c("M",mw,"g/L"){}
-    CUnit operator()(const CUnit::unit_name& name_, const CUnit::unit_name& base_)
+    CUnit operator()(const unit_name& name_, const unit_name& base_)
     {
         CUnit r=m(name_,base_);
         if (!r.error)
