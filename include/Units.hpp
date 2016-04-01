@@ -30,6 +30,7 @@
 #include <functional>
 #include <sstream>
 #include <assert.h>
+#include <exception>
 
 
 class CUnit;
@@ -37,6 +38,26 @@ class CUnit;
 std::ostream& operator<<( std::ostream& o, const CUnit& u);
 
 /// Converting Units (not necessarily linearly)
+
+struct UnitError :  std::runtime_error
+{
+	static bool use_throw; ///< def { true }; use carefully - it is a global variable !!
+
+	UnitError(const std::string& what_arg)
+		:std::runtime_error{ std::string("Run-time Unit Error: ") + what_arg }
+	{}
+
+	UnitError(const char * what_arg)
+		:UnitError{ std::string(what_arg)  }
+	{}
+
+	void emit()
+	{
+		if (use_throw)
+			throw UnitError(*this);
+		std::cerr << what();
+	}
+};
 class CUnit
 {
   public:   
@@ -70,19 +91,41 @@ class CUnit
 
             return conversion (c,s, [rc,this](double b){return nlc(rc.c*rc.nlc(b)+rc.s);});
         }
-        conversion inverted() const
+
+		/// transform THIS conversion into the inverse, but throw if nonlinear
+        conversion invert(bool *error_flag=nullptr)  /// \todo add error code !
         { 
-            assert (linear);
-            return conversion (1/c, -s/c);
-        }
-        conversion invert()
-        { 
-            assert (linear);
-            c =1/c;     /// y=cx+s  => x=(1/c)y-s/c
+			if (!linear)
+			{
+				if (error_flag)
+					*error_flag = true;
+				UnitError("Invertion of non linear function is not possible").emit();
+				return *this;
+			}
+			if (!c)
+			{
+				if (error_flag)
+					*error_flag = true;
+				UnitError("Invertion of non dependend quantity is not possible").emit();
+				return *this;
+			}
+
+			c =1/c;     /// y=cx+s  => x=(1/c)y-s/c
             s=-s*c;     /// c'=1/c  ;  s'= -s/c = -sc'
+			if (error_flag)
+				*error_flag = false;
+
             return *this;
         }
-        double operator()(double ori_val) const
+
+		/// return a new inverted conversion, but throw if nonlinear
+        conversion inverted(bool *error_flag = nullptr) const
+        { 
+			return conversion (*this).invert(error_flag);
+        }
+
+		/// execute the conversion - return the corresponding value
+        double operator()(double ori_val) const 
         {
             if (linear)
                 return c*ori_val+s;
@@ -144,19 +187,20 @@ protected:
     CUnit(const unit_name& from, const unit_name& to)   
         : name(from), base(to), error(true)
     {
-        if (! (unit_exist(to) && unit_exist(from)) )
-        {    
-           std::cerr << std::endl << "We need two existing units in order to find a conversion. " << from
-                     << " based on " << to << std::endl;
-                return;
-         }
-        if (_Units[from].magnitude != _Units[to].magnitude)
-        {   
-            std::cerr << std::endl << "Units "<< from<< " (" << _Units[from].magnitude << ") and "
-                     << to << " (" << _Units[to].magnitude<<") are not compatible. " <<  std::endl;
-                return;
-        }
-        magnitude=_Units[from].magnitude;
+		if (!unit_exist(to) || !unit_exist(from))
+		{
+			UnitError(std::string("We need two existing units in order to find a conversion. ") + from + " based on " + to + "\n ").emit();
+			return;
+		}
+
+		if ( !compatible(from, to) )
+		{
+			UnitError(std::string("Units ") + from + " (" + _Units[from].magnitude + ") and "
+                               + to + " (" + _Units[to].magnitude + ") are not compatible. ").emit();
+			return;
+		}
+
+		magnitude = _Units[from].magnitude;
         if (from==to)       
         {     
             error=false;     
@@ -203,12 +247,10 @@ protected:
 
 
         if (c_to!=bu1)
-        {    
-            std::cerr << std::endl << "Units "<< from<< " and " << to 
-                      << " (" << _Units[from].magnitude << ") have no conversion defined. " <<  std::endl;
-            return ;
-        }
-
+		{
+			UnitError(std::string("Units ") + from + " and " + to + " (" + _Units[from].magnitude + ") have no conversion defined. " ).emit();
+		    return;
+		}
         if (! conv.linear )   /// \todo what if nonlinear? find the inverse definition?
             return;        
 

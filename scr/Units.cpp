@@ -54,42 +54,43 @@ void CUnit::add()
 {
     if(name=="")
     {    
-        std::cerr << std::endl << "We need a new unit name in order to create a new unit. ";
+		throw UnitError(to_string()+ "\n We need a new unit name in order to create a new unit. ");
         return;
     }
     if (unit_exist(name))         // this Unit name allready exist
     {    
         if (unit_exist(base))     // this base allready exist too
-        {
-            std::cerr << std::endl << name << " allready defined as " << _Units[name] ; 
-            return;
-        }                   // the unti exist, but the base dont: asume we are actualy defining the base
+			return  UnitError(to_string() + "\n " + name + "was allready defined as: " + _Units[name].to_string()).emit();
+        
+		// the unit exist, but the base dont: asume we are actualy defining the base
+
         if (! conv.linear) 
-        {
-            std::cerr << std::endl << "Unable to define " << base << " reverting the non-lineal definition of "<< name ; 
-            return;
-        }
-        conv.invert(); 
+			return  UnitError(to_string() + "\nUnable to define " + base + " by reverting the non-lineal definition of "+ name ).emit();
+
+		conv.invert(&error); 
+		if (error)
+			return;
+
         name.swap(base);           
     } 
-    if (unit_exist(base))   // La base ya existe
+	
+	error = true;
+
+    if (unit_exist(base))   //  base already exist
     {
         if(_Units[base].magnitude != magnitude)          
             if (magnitude=="")
                 magnitude=_Units[base].magnitude;    // definimos la nueva unidad en la magnitud de la base
             else 
-            {    
-                std::cerr << std::endl << "The new unit and the base need to be of the same magnitude." << std::endl;
-                std::cerr << std::endl << base << " allready defined as " 
-                            << _Units[base]  ; 
-                return;
-            }                 // todo normal !!
+				return  UnitError(to_string() + "\nThe new unit and the base need to be of the same magnitude. " +
+                                 base + " was allready defined as: \n" +  _Units[base].to_string() ).emit();
+            
+		    //  normal !!
+
     }   else                                // La base no existe
         if (magnitude=="")
-        {    
-            std::cerr << std::endl << "We need a new magnitude name in order to create the new base unit: " << name   << std::endl;
-            return;
-        } else
+			return  UnitError(to_string() + "\nWe need a new magnitude name in order to create the new base unit: " + name ).emit();
+        else
             if(base=="")
             { 
                 base=name;
