@@ -1,7 +1,7 @@
 /**
 * ProgParam - manage subprograms & programs parameters:
 *             definitions & I/O from projects files or UI
-* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2016, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *    This program is free software : you can redistribute it and / or modify
 *    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 *
 *  @file  ProgParam\include\init_prog_param_impl.h
 *  @brief
-*  @autor Ariel Vina-Rodriguez (qPCR4vir)
+*  @author Ariel Vina-Rodriguez (qPCR4vir)
 */
 
 
@@ -38,13 +38,13 @@
 
 #include "common_basics.h" 
 
-/// \brief Organize a "software" or Project into Specialized Programns and manage the input/config parametrs for each of the programs. 
-/// Make ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 
+/// \brief Organize a "software" or Project into Specialized Programs and manage the input/config parameters for each of the programs. 
+/// Make ease to write a program interface with a command-line, a text "project file" or a GUI, or all of then together. 
 /// Definitions and declarations for the user interface. Also to be used directly by the programs. Almost primary, depend only on Common basics.
 ///  \todo:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
 namespace Programs{
 class IProg ;
-/// Non abstract basic Interface of programms parametr which define default save, load and title use.
+/// Non abstract basic Interface of programs parameter which define default save, load and title use.
 class IBParam
 {
    std::string _Titel;
@@ -56,8 +56,8 @@ class IBParam
 	        }    
 	 virtual ~IBParam(){}
 
-	 std::string Titel   ()const{return _Titel;}               ///<  ???  Human redeable
-	 void        SetTitel(std::string titel){ _Titel=titel;}   ///<  ???  Human redeable
+	 std::string Titel   ()const{return _Titel;}               ///<  ???  Human readable
+	 void        SetTitel(std::string titel){ _Titel=titel;}   ///<  ???  Human readable
 
 
  virtual std::ostream &save	(std::ostream	&osPr) const        ///< The default. To be change in derivate classes
@@ -73,8 +73,8 @@ class IBParam
    // ifstream& operator >>(ifstream& ifs,IParam& p);                             //    ?????????????????
    // ofstream& operator <<(ofstream& ofs,const IParam& p){ p.save(ofs); return ofs;};  //    ?????????????????
 
-///  \brief Base clase to manage a parametr of "some" type (defined in derived classes).  
-///
+/// Base class to manage a parameter of "some" type (defined in derived classes).  
+
 /// It will call a IParam::ValueChanged callback function and set IParam::Unit and IParam::Etiq. 
 /// Used to save to and load from an stream, without implementing the load and IParam::saveValue functions. 
 class IParam : public IBParam
@@ -90,7 +90,7 @@ class IParam : public IBParam
  public:
      std::function<void(void/*IBParam& param*/)> ValueChanged ; ///< A callback each time the value change
 
-	 IParam (  IProg *pp,                     ///< the programm who own the parametr (tipicaly "this", the object for which the parametr is a member) 
+	 IParam (  IProg *pp,                     ///< the program who own the parameter (typically "this", the object for which the parameter is a member) 
                const std::string& titel, 
                const std::string& etiquete, 
                const std::string& unit="" ) ;
@@ -98,7 +98,7 @@ class IParam : public IBParam
 	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. I use with length 10
 	 void     SetEtiq(std::string etiq, IProg *prog);
 	
-	 std::string Unit()const{return _unit;}                 ///< Human redeable and optional
+	 std::string Unit()const{return _unit;}                 ///< Human readable and optional
 
 	 std::ostream	&save	(std::ostream	&osPr) const override  ///< Implemented using IParam::saveValuee plus a call to IBParam::save 
 			            {    
@@ -126,8 +126,8 @@ class IParam : public IBParam
 	  ~IParam()override{}
 };
 
-           /// \brief Only partialy manage a parametr of type Num (a "numeric" type) for with the value have to be in a range defined by min and max. 
-           ///
+           /// Only partially manage a parametr of type Num (a "numeric" type) for with the value have to be in a range defined by min and max. 
+ 
            /// Implement get and set (with check if value is in range and throw) but NOT loadValue and saveValue. Do not check the DefValue. 
   template <typename Num>
 class CParamBNRange: public IParam, public NumRang<Num>
@@ -146,7 +146,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 	             _value=defValue ;
 	          }
 
-								/// Num &parRef,   _v used and therefore does not need an external parametr
+								/// Num &parRef,   _v used and therefore does not need an external parameter
     CParamBNRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
@@ -168,7 +168,8 @@ class CParamBNRange: public IParam, public NumRang<Num>
 class CProject;
 //class CEspProg ;
 
-/**  \brief   Abstract "Interface" for parametrs of programs which only save/load project and run programs (all virtual)
+/**  \brief   Abstract "Interface" for parameters of programs which only save/load project and run programs (all virtual)
+ *
  *   \todo Para crear y anadir un nuevo programa:
  *		- General plan: crear (plan) interfase de usuario para tener idea de los parametros a usar
  *		- Common Programm Parametrs: crear class tomando como base Programs::CCommProgParam o uno de sus derivados para contener todos los parametros comunes
@@ -199,7 +200,7 @@ class IProg : public IBParam // -------	  Clase    ----------
                                     auto p=_parametrs.find(etiq); 
 	                                if (p==_parametrs.end()) 
 										return false;
-	                                return p->second->load(isPr); //throw execption if false ????
+	                                return p->second->load(isPr); //throw exception if false ????
 	                            }
 	virtual	int		Run			(IProg &prog				){return prog.Run();}       //  ???????
 	virtual int		Run			(		void					)
@@ -276,7 +277,7 @@ public:
 	        IProg::save(osPr) ;   
 	   
 	   osPr<< std::endl<<std::endl<<
-			 "How to use? \n Each program´s parameter have an unique identificator or etiquette. \n "
+			 "How to use? \n Each programs parameter have an unique identificator or etiquette. \n "
 			 "While loading, the text between the beginning of a line and the first : will be taken as\n "
 			 "an etiquette (discarding surrounding but not internal spaces). \n"
 			 "IF the etiquette is know (valid), the rest of the line will be use to deduce the value of the parameter. \n"
@@ -319,17 +320,17 @@ class CCommProgParam : public IProg
 
 	std::ofstream	&save_all(std::ofstream	&osPr 				 ) const
 	                    {   
-							assert(("Atemt to use an unitialized project pointer in save_all",_proj));
+							assert(("attempt to use an uninitialized project pointer in save_all",_proj));
 							return _proj->save_all(osPr);
 	                    }
 	bool	    load_all(std::string     &etiq, std::ifstream &isPr)
 	                    {
-							assert(("Atemt to use an unitialized project pointer in load_all",_proj));
+							assert(("attempt to use an uninitialized project pointer in load_all",_proj));
 							return _proj->load_all(etiq,isPr);
 	                    } 
 	void        AddProgToProject(IProg *p)
 	                    {
-							assert(("Atemt to use an unitialized project pointer in AddProgToProject",_proj));
+							assert(("attempt to use an uninitialized project pointer in AddProgToProject",_proj));
 							_proj->AddProg(p);
 	                    }
     virtual std::string  MakeRuningName()const {return "";}
@@ -341,7 +342,7 @@ class	CEspProg  : public IProg
 		                    : _cp(commParam), IProg(titel ) 
 	                        { _cp.AddProgToProject(this);}
 	CCommProgParam &_cp;
-	std::ofstream	&save_all(std::ofstream &osPr)	const		   // Save all needed parametrs for this programm, not only the spesific ones
+	std::ofstream	&save_all(std::ofstream &osPr)	const		   // Save all needed parameters for this program, not only the specific ones
 	                     {          _cp.save(osPr) ;			
 	                         return     save(osPr) ;    }
 	bool	    load_all(std::string &var, std::ifstream &isPr)	  // Usar estas dos funciones solo si se quiere save or load olny this program
