@@ -1,6 +1,8 @@
 /**
 * ProgParam - manage subprograms & programs parameters:
 *             definitions & I/O from projects files or UI
+* available at: https://github.com/qPCR4vir/ProgParam
+*
 * Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *    This program is free software : you can redistribute it and / or modify
@@ -17,12 +19,12 @@
 *    along with this program.If not, see <http://www.gnu.org/licenses/>.
 *
 *  @file ProgParam\include\common_basics.h
-*  @brief Basic funtionalities. To be used by UI and programs. 
+*  @author Ariel Vina-Rodriguez (qPCR4vir)
+*  @brief Basic functionalities. To be used by UI and programs. 
 *         Primary, with no dependencies. 
-*  @autor Ariel Vina-Rodriguez (qPCR4vir)
 */
 
-// 
+
 #ifndef _COMMON_BASIC_H
 #define _COMMON_BASIC_H
 
@@ -127,6 +129,7 @@ private:
 	char *_s;
 };
 
+/// Numeric Range 
 template <class Num>
 class NumRang				// ------------------------------------------------------------------- NumRang<Numeric>	-----------------
 {	
@@ -167,8 +170,9 @@ public:
 	bool UpdateMax(Num ma){ return (ma>max) ? max=ma, true : false ;}
 };
 
+/// Numeric Range with settable Average
 template <class Num>
-class NumRangA	: public NumRang<Num>	// ------------------------------------------ NumRangA<Numeric> 	with seteable average-----------------
+class NumRangA	: public NumRang<Num>	// -------------------------------------- NumRangA<Numeric> 	--------------
 {public: 
 	NumRangA(					   ):					ave(0)				{} 
 	NumRangA(		 Num av		   ):NumRang(av),		ave(av)				{}
@@ -195,7 +199,7 @@ template <class Num>
 inline	bool inRang(const Num X, const NumRang<Num> R)  {return  R.inRang(X) ;}
 
 
-class DegRes			//------------------------------------------------------------	DegRes	-------------------------------------
+class DegRes			//---------------------------------------------------	DegRes	-------------------------------------
 {public: float min,ave,max; 
 	DegRes(							   ):min(0 ),ave(0 )		,max(0 ){}; 
 	DegRes(			 float av		   ):min(av),ave(av)        ,max(av){};
