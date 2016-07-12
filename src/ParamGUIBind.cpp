@@ -16,7 +16,7 @@
 *    You should have received a copy of the GNU General Public License
 *    along with this program.If not, see <http://www.gnu.org/licenses/>.
 *
-*  @file  ProgParam\scr\ParamGUIBind.cpp
+*  @file  ProgParam\src\ParamGUIBind.cpp
 *  @brief
 *  @autor Ariel Vina-Rodriguez (qPCR4vir)
 */
@@ -26,7 +26,7 @@
 namespace ParamGUIBind 
 {
 
-PriorizeDefault IParBind:: _def=PriorizeDefault::Form;		
+PriorizeDefault IParBind:: _def=PriorizeDefault::Form;        
 BindGroup::~BindGroup(){}
 
 

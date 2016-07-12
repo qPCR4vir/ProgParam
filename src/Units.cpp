@@ -16,7 +16,7 @@
 *    You should have received a copy of the GNU General Public License
 *    along with this program.If not, see <http://www.gnu.org/licenses/>.
 *
-*  @file  ProgParam\scr\Units.cpp
+*  @file  ProgParam\src\Units.cpp
 *  @brief
 *  @autor Ariel Vina-Rodriguez (qPCR4vir)
 */
@@ -60,27 +60,27 @@ void CUnit::add()
 {
     if(name=="" && magnitude !="dimensionless")
     {    
-		throw UnitError(to_string()+ "\n We need a new unit name in order to create a new unit. ");
+        throw UnitError(to_string()+ "\n We need a new unit name in order to create a new unit. ");
         return;
     }
     if (unit_exist(name))         // this Unit name allready exist
     {    
         if (unit_exist(base))     // this base allready exist too
-			return  UnitError(to_string() + "\n " + name + "was allready defined as: " + _Units[name].to_string()).emit();
+            return  UnitError(to_string() + "\n " + name + "was allready defined as: " + _Units[name].to_string()).emit();
         
-		// the unit exist, but the base dont: asume we are actualy defining the base
+        // the unit exist, but the base dont: asume we are actualy defining the base
 
         if (! conv.linear) 
-			return  UnitError(to_string() + "\nUnable to define " + base + " by reverting the non-lineal definition of "+ name ).emit();
+            return  UnitError(to_string() + "\nUnable to define " + base + " by reverting the non-lineal definition of "+ name ).emit();
 
-		conv.invert(&error); 
-		if (error)
-			return;
+        conv.invert(&error); 
+        if (error)
+            return;
 
         name.swap(base);           
     } 
-	
-	error = true;
+    
+    error = true;
 
     if (unit_exist(base))   //  base already exist
     {
@@ -88,14 +88,14 @@ void CUnit::add()
             if (magnitude=="")
                 magnitude=_Units[base].magnitude;    // definimos la nueva unidad en la magnitud de la base
             else 
-				return  UnitError(to_string() + "\nThe new unit and the base need to be of the same magnitude. " +
+                return  UnitError(to_string() + "\nThe new unit and the base need to be of the same magnitude. " +
                                  base + " was allready defined as: \n" +  _Units[base].to_string() ).emit();
             
-		    //  normal !!
+            //  normal !!
 
     }   else                                // La base no existe
         if (magnitude=="")
-			return  UnitError(to_string() + "\nWe need a new magnitude name in order to create the new base unit: " + name ).emit();
+            return  UnitError(to_string() + "\nWe need a new magnitude name in order to create the new base unit: " + name ).emit();
         else
             if(base=="")
             { 
