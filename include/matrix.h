@@ -53,7 +53,7 @@ private:
     index   _capRow{},                                 ///<   _cap: capacity, reserved memory 
             _numRow{},                                 ///<   _num:used memory
             _capCol{}, _numCol{}, _cr{}, _cc{};   
-    bool    Resize        (void);        ///<  --- kill old data. "Compacta", pero destruyendo datos anteriores. ??? Para que??
+    bool    shrink_to_fit        (void);        ///<  --- kill old data. "Compacta", pero destruyendo datos anteriores. ??? Para que??
     void    forceResize   (void);        ///<  --- kill old data        //      Hace falta ??????
     void    Delete        ();            ///<  --- kill old data
     //void    CopyRef       (const CMatrix_RA& mtx);        //  ????
@@ -315,7 +315,7 @@ void CMatrix_RA<Num>::forceResize  ()
 }
 
         template <typename Num>                    //  --- kill old data  si "Compacta",  Para que??   --------   Resize        ()  --------
-bool CMatrix_RA<Num>::Resize        ()
+bool CMatrix_RA<Num>::shrink_to_fit        ()
 {    
     if ( _numRow < _capRow      ||     _numCol < _capCol )    
     {        
