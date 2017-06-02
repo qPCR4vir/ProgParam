@@ -40,6 +40,199 @@
 #include <vector>
 #include <string>
 
+
+    /// an Array (std::vector) of Rows (std::vector) of Num - an implementation detail for the class CTable
+    /// 
+    /// \todo decide what is best: a real n x m matrix or a table with variable length rows
+    ///       and if n x m is chosen, to self implement index? ... for the new nana::listbox interface is best to have a vector of rows. 
+    template <typename Num>
+class CMatrix_RV
+{public:
+    using RowType =   std::vector<Num>   ;
+    using  index  = typename  RowType::size_type ;
+private:
+    std::vector<RowType> _mtx;
+    index   /*_capRow{},*/                             ///<   _cap: capacity, reserved memory 
+            /*_numRow{},*/                             ///<   _num: in use  
+            _capCol{},                             ///<   _cap: capacity of columns, reserved memory 
+            _numCol{},                             ///<   _num: used columns, used memory 
+            _cr{},                                 ///<  _c: current - current row, a kind of index-iterator?
+            _cc{};                                 ///<  _c: current - current columnd, a kind of index-iterator?
+
+    bool    shrink_to_fit (void);                  ///<  "Compacta"
+    void    clear        ();                       ///<  --- kill old data
+public:
+    CMatrix_RV    (                               ) {    }     
+
+               ///    Reserve "sufficient" memory for rows ??
+    CMatrix_RV    (index CapRow, index CapColumns){            
+                                                        Create ( CapRow, CapColumns);    
+                                                  }  
+               ///    Reserve "sufficient" memory for rows ?? --- kill old data
+    void    Create      (index CapRow, index CapColumns);   
+    //bool    Reset        (index NumRow, index NumColumns);        //  --- kill old data?
+
+    void    resize      (index NumRow, index NumColumns){ 
+                                                            _mtx.resize(NumRow); 
+                                                            for (RowType& r : _mtx)
+                                                                r.resize(NumColumns);
+                                                            _numCol = NumColumns;
+                                                            _capCol = std::max(_capCol, CapColumns);   // ?? 
+                                                        }    
+
+    Num   &operator() (index row, index col    )   { 
+                                                            return _mtx[row][col]    ;
+                                                   }
+    Num    operator() (index row, index col    )const   { 
+                                                            return _mtx[row][col]    ;
+                                                        }
+    Num    &at        (index row, index col    )        { 
+                                                           return _mtx.at[row].at[col];    
+                                                        }
+    Num    at         (index row, index col    )const   { 
+                                                           return _mtx.at[row].at[col];    
+                                                        }
+
+    Num    &expand        (index row, index col    ) ;    ///<   Variante de acceso a elemento (row,col) que amplia zona en uso e incluso capacidad si necesario
+
+            /// aumenta la capacidad de rows A newRowCap rows
+    void    Expand2RowsCap(index newRowCap        )     {    
+                                                            AddRowsCap    (newRowCap - capacityRow() ) ;  
+                                                        }    
+            /// aumenta la cap de rows en: NumRows rows
+    void    AddRowsCap    (index NumRows=1        ); 
+
+            /// aumenta el num de rows en: NumRows rows
+    RowType&    AddRows        (index NumRows=1     )     {                     
+                                                            _cr=_numRow; 
+                                                            _cc=0; 
+                                                            Expand2RowsCap ( _numRow= _numRow + NumRows ); 
+                                                            return _mtx[_cr]; 
+                                                        }                                   
+    index   capacityRow (                    )const    { return _mtx.capacity();}
+    index   capacityCol (                    )const    { return _capCol        ;}
+    index   totalRow    (                    )const    { return _mtx.size()    ;}
+    index   totalCol    (                    )const    { return _numCol        ;}
+    void    swap        (CMatrix_RV& mtx     );                 ///<   swap - muy economico
+    void    Copy        (const CMatrix_RV& mtx  );              ///<   copia contenido, aumentando zona en uso y cap si necesario. Conserva datos propios no reescritos
+            CMatrix_RV  (const CMatrix_RV& mtx  ){              ///<   crea copia con cap restringida a zona en uso    REVISAR  !!!!
+                                                    Create (mtx.totalRow(), mtx.totalCol() ); 
+                                                    Copy(mtx);
+                                                 }    
+    void    SetNext     (index row, index col   )      { 
+                                                            assert( row < totalRow() && col < totalCol() ); 
+                                                            _cr=row ; 
+                                                            _cc=col;
+                                                        }
+    RowType    NextRow      ()                          {    
+                                                            _cc=0; return _mtx[++_cr];
+                                                        }
+    Num        &Next        ()                          {    
+                                                            return expand(_cr,_cc++);    // at (_cr,_cc++);  ??????????????
+                                                        }
+    CMatrix_RV& operator >> (Num &num)        const     {                                // const ??????????????
+                                                            num    = Next(); 
+                                                            return *this ;
+                                                        }
+    CMatrix_RV& operator << (const Num &num)            {
+                                                            Next() = num   ; 
+                                                            return *this ;
+                                                        }
+    void    InitializeRow(index row, const Num& num)    {                                  // I need this ???
+                                                            Row(row) = RowType( totalCol(), num );
+                                                        }
+    void    InitializeCol(index col, const Num& num)    {                                 // I need this ???
+                                                            for (auto &r : _mtx) 
+                                                                r[col] = num;
+                                                        }
+    void    Initialize   (             const Num& num)  { 
+                                                            _mtx = std::vector<RowType> (totalRow(), RowType( totalCol(), num )) ;
+                                                            //RowType row ( totalCol(), num );
+                                                            //for (auto &r : _mtx) 
+                                                            //     r = row;
+                                                        }
+    RowType& Row(index row)                             { 
+                                                            assert(row<totalRow() ); 
+                                                            return _mtx[row];
+                                                        }
+
+
+};
+
+template <typename Num>             
+void CMatrix_RV<Num>::Create(index CapRow, index CapColumns)
+{
+    _mtx.clear();
+    _mtx.capacity(CapRow);  
+
+    _capCol = CapColumns;    //   ?????????????????????????????????????
+    _numCol = _cr = _cc = 0;
+}
+
+template <typename Num>                    //  --- kill old data  si "Compacta",  Para que??   --------   Resize        ()  --------
+bool CMatrix_RV<Num>::shrink_to_fit()
+{
+    bool shrink_rows{ capacityRow() > totalRow()  };
+    bool shrink_cols{ capacityCol() > totalCol()  };    //  ?????????????????
+
+    _mtx.shrink_to_fit(); //if (shrink_rows)
+
+     if (shrink_cols)
+     {
+         _mumCol = 0;
+         for (RowType &r : _mtx)
+         {
+            r.shrink_to_fit();
+            _numCol = std::max(_numCol, r.size());
+         }
+         _capCol = _numCol;
+    }
+
+    return shrink_rows || shrink_cols;
+}
+
+template <typename Num>        //    Variante de acceso a elemento (row,col) que amplia zona en uso e incluso capacidad si necesario
+Num     &CMatrix_RV<Num>::expand(index row, index col)
+{
+    if      (col >= totalCol() && row >= totalRow())                        // adjust both r & c
+                                                      resize(row,col);
+    else if (col >= totalCol() )                                            // adjust only col
+    {
+        _numCol = col + 1;
+        for (RowType& r : _mtx)
+            r.resize(_numCol);
+
+        _capCol = std::max(_capCol, _numCol);   
+    }
+    else if (row >= totalRow() )                                             // adjust only row
+    {
+        index NumRow = totalRow();
+        _mtx.resize(row+1);
+        for ( ; NumRow < totalRow(); ++NumRow)
+        {
+            _mtx[NumRow].capacity( capacityCol() );
+            _mtx[NumRow].resize  ( totalRow   () );
+        }
+    }
+    return this->operator()(row, col);
+}
+
+template <typename Num>                    //    aumenta la capacidad de rows en: NumRows rows  --- AddRowsCap  ----
+void CMatrix_RV<Num>::AddRowsCap(index addRow = 1)
+{
+    if (addRow <= 0) return; // ?
+
+    index NumRow = totalRow();
+    _mtx.resize(NumRow+);
+    for ( ; NumRow < totalRow(); ++NumRow)
+    {
+        _mtx[NumRow].capacity( capacityCol() );
+        //_mtx[NumRow].resize  ( totalRow   () );   // ??
+    }
+}
+
+
+
     using index = int ;    
 
     /// an Array of Rows of Num (RA) - an implementation detail for the class CTable
@@ -53,9 +246,9 @@ private:
     index   _capRow{},                                 ///<   _cap: capacity, reserved memory 
             _numRow{},                                 ///<   _num:used memory
             _capCol{}, _numCol{}, _cr{}, _cc{};   
-    bool    shrink_to_fit        (void);        ///<  --- kill old data. "Compacta", pero destruyendo datos anteriores. ??? Para que??
-    void    forceResize   (void);        ///<  --- kill old data        //      Hace falta ??????
-    void    Delete        ();            ///<  --- kill old data
+    bool    shrink_to_fit        (void);               ///<  --- kill old data. "Compacta", pero destruyendo datos anteriores. ??? Para que??
+    void    forceResize   (void);                      ///<  --- kill old data        //      Hace falta ??????
+    void    Delete        ();                          ///<  --- kill old data
     //void    CopyRef       (const CMatrix_RA& mtx);        //  ????
 public:
     CMatrix_RA    (                               ) {    }     
