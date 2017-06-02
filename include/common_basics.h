@@ -136,7 +136,7 @@ class NumRang				// ------------------------------------------------------------
     Num min{}, max{} ; 
 public: 
 	NumRang(					  )                            {} 
-	NumRang(		Num av		  ):min(av),			max(av){}
+    explicit NumRang(Num av		  ):min(av),			max(av){}
 	NumRang(Num mi,         Num ma):min(mi),			max(ma){}
 
 	void Set(					   ){min=0 			; max =0   ;}
@@ -175,7 +175,7 @@ template <class Num>
 class NumRangA	: public NumRang<Num>	// -------------------------------------- NumRangA<Numeric> 	--------------
 {public: 
 	NumRangA(					   ):					ave(0)				{} 
-	NumRangA(		 Num av		   ):NumRang(av),		ave(av)				{}
+explicit NumRangA(	 Num av		   ):NumRang(av),		ave(av)				{}
 	NumRangA(Num mi,         Num ma):NumRang(mi,ma),	ave(NumRang::Ave()) {}
 	NumRangA(Num mi, Num av, Num ma):NumRang(mi,ma),	ave(av)				{}
 
@@ -202,7 +202,7 @@ inline	bool inRang(const Num X, const NumRang<Num> R)  {return  R.inRang(X) ;}
 class DegRes			//---------------------------------------------------	DegRes	-------------------------------------
 {public: float min,ave,max; 
 	DegRes(							   ):min(0 ),ave(0 )		,max(0 ){}; 
-	DegRes(			 float av		   ):min(av),ave(av)        ,max(av){};
+    explicit 	DegRes(	float av	   ):min(av),ave(av)        ,max(av){};
 	DegRes(float mi,           float ma):min(mi),ave((mi+ma)/2) ,max(ma){};
 	DegRes(float mi, float av, float ma):min(mi),ave(av)        ,max(ma){};
 

@@ -166,7 +166,7 @@ class CTable : public CMatrix_RA<Num>
     std::vector<std::string>   _titRows, _titColumns;
     std::string                _titTable ;
 public:
-    CTable(std::string TitTable)                              : _titTable(TitTable) {}
+    explicit     CTable(std::string TitTable)                              : _titTable(TitTable) {}
     CTable(std::string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),        _titTable(TitTable), 
                                                              _titRows(capRow),                       _titColumns(capCol)
                                                         {    _titRows.reserve (capRow ); _titColumns.reserve(capCol);}
