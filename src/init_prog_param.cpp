@@ -87,7 +87,7 @@ bool    CProject::load()
                 return true;
     //        isPr >> skipws ;
             etiq=trim_string(etiq) ;
-            if ( ! load_all(etiq, isPr))             
+            if ( ! load(etiq, isPr))             
                 isPr.ignore(1000,'\n')  ;
         }
     while (isPr.good() ); 

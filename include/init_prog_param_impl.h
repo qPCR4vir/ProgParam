@@ -188,14 +188,14 @@ class IProg : public IBParam // -------	  Clase    ----------
     void insertParam(IParam *pp){_parametrs[pp->Etiq ()]=pp;}
 
 	IProg (const std::string& titel, CProject *proj=nullptr); /*:_Titel(titel){ if (proj) proj->_ProgList.push_back(this);}*/
-	std::ofstream	&save		(std::ofstream	&osPr				 )  const
+	std::ostream	&save		(std::ostream	&osPr				 )  const override
 	                            {   
-                                    osPr << std::endl <<"\t------\t"<<Titel()<<" "<<std::endl ;
+                                    osPr << "\n\t------\t"<<Titel()<<" \n" ;
 									for (auto &par : _parametrs) 
 								        par.second->save(osPr); 
 	                                return osPr;
 	                            }
-	         bool	load		(std::string		&etiq, std::ifstream &isPr) 
+	         bool	load		(std::string		&etiq, std::istream &isPr) override
 	                            {   
                                     auto p=_parametrs.find(etiq); 
 	                                if (p==_parametrs.end()) 
@@ -253,28 +253,30 @@ public:
 	void	    ProjetFile	(const std::string &ProjetFileName){	_ProjetFileName=trim_string(ProjetFileName);	}
 	std::string ProjetFile	(                            )const{	return _ProjetFileName;	}
 
-    bool	         load		(); 
-	bool	         load_defPr	()                                 {  ProjetFile(_defPr);         return load();	}
-	bool	         load	    (const std::string &ProjetFileName){  ProjetFile(ProjetFileName); return load();	}
+    bool load		(); 
+	bool load_defPr	()                                 {  ProjetFile(_defPr);         return load();	}
+	bool load	    (const std::string &ProjetFileName){  ProjetFile(ProjetFileName); return load();	}
 
     ///  \todo  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
-	std::ofstream	&saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);			return save_all(osPr);}
+	void saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);	
+	                                                    save(osPr); }
 
-	std::ofstream	&save		()		const		            {	return saveToFile(_ProjetFileName.c_str())	;   }
-	std::ofstream	&save_defPr	()                              {   ProjetFile(_defPr);         
-                                                                    return save();	    }
-	std::ofstream	&save_asDefPr()		const		            {	return saveToFile(_defPr.c_str())	        ;   }
-	std::ofstream   &save	 (const std::string &ProjetFileName){	ProjetFile(ProjetFileName); 
-                                                                    return save();	    }
+	void save		()		const		            {   saveToFile(_ProjetFileName.c_str())	;   }
+	void save_defPr	()                              {   ProjetFile(_defPr);
+                                                        save();	    }
+	void save_asDefPr()		const		            {	saveToFile(_defPr.c_str())	        ;   }
+	void save	 (const std::string &ProjetFileName){	ProjetFile(ProjetFileName);
+                                                        save();	    }
 
-	virtual std::ofstream &saveTMP() const            /// Reescribe el projecto actual. Pensar algo mejor? Preguntar al user? usar # conscuti?
-	                            {	return save();	}
+	virtual void saveTMP() const            /// Reescribe el projecto actual. Pensar algo mejor? Preguntar al user? usar # conscuti?
+	                 {	  save();	}
 
-	   std::ofstream&	save_all(std::ofstream &osPr)	const 			
+
+	std::ostream	&save(std::ostream	&osPr)  const override
 	{   
         for(auto p : _ProgList) 
-			p->save(osPr) ;		
-	        IProg::save(osPr) ;   
+			p->save(osPr) ;		     // save all subprograms
+	    IProg::save(osPr) ;          // save onw parametr list
 	   
 	   osPr<< std::endl<<std::endl<<
 			 "How to use? \n Each programs parameter have an unique identificator or etiquette. \n "
@@ -293,12 +295,13 @@ public:
 	   return (osPr) ;
 	   
 	   }   // por que solo funciona con el IProg:: ???
-	bool	            load_all(std::string &etiq, std::ifstream &isPr)	//override
+	bool            load    (std::string &etiq, std::istream  &isPr) override
+//		bool	            load_all(std::string &etiq, std::ifstream &isPr)	//override
 	{   
         for(auto p : _ProgList)	
-			if ( p->load(etiq, isPr)) 
+			if ( p->load(etiq, isPr))       // load from any subprogram
 				return true ;
-		return IProg::load(etiq, isPr);					 
+		return IProg::load(etiq, isPr);		  // load from onw parametr list			 
     }
 
     int		Run (IProg &prog)	override                    //   ??????
@@ -318,16 +321,16 @@ class CCommProgParam : public IProg
 		            : IProg(titel,proj),   _proj(proj) {}
 	~CCommProgParam() override	{}
 
-	std::ofstream	&save_all(std::ofstream	&osPr 				 ) const
-	                    {   
-							assert(("attempt to use an uninitialized project pointer in save_all",_proj));
-							return _proj->save_all(osPr);
-	                    }
-	bool	    load_all(std::string     &etiq, std::ifstream &isPr)
-	                    {
-							assert(("attempt to use an uninitialized project pointer in load_all",_proj));
-							return _proj->load_all(etiq,isPr);
-	                    } 
+	//std::ostream	&save(std::ostream	&osPr 				 ) const override
+	//                    {   
+	//						assert(("attempt to use an uninitialized project pointer in save_all",_proj));
+	//						return _proj->save(osPr);
+	//                    }
+	//bool	    load(std::string     &etiq, std::istream &isPr) override
+	//                    {
+	//						assert(("attempt to use an uninitialized project pointer in load_all",_proj));
+	//						return _proj->load(etiq,isPr);
+	//                    } 
 	void        AddProgToProject(IProg *p)
 	                    {
 							assert(("attempt to use an uninitialized project pointer in AddProgToProject",_proj));
@@ -336,19 +339,23 @@ class CCommProgParam : public IProg
     virtual std::string  MakeRuningName()const {return "";}
 
 };
+
 class	CEspProg  : public IProg 
 {public:										// Permite no duplicar los parametros comunes en los parametros especificos
 	explicit CEspProg(const std::string& titel, CCommProgParam &commParam ) 
 		                    : _cp(commParam), IProg(titel ) 
 	                        { _cp.AddProgToProject(this);}
+
 	CCommProgParam &_cp;
-	std::ofstream	&save_all(std::ofstream &osPr)	const		   // Save all needed parameters for this program, not only the specific ones
+
+	std::ostream	&save_with_comm(std::ostream &osPr)	const		   // Save all needed parameters for this program, and not only the specific ones
 	                     {          _cp.save(osPr) ;			
-	                         return     save(osPr) ;    }
-	bool	    load_all(std::string &var, std::ifstream &isPr)	  // Usar estas dos funciones solo si se quiere save or load olny this program
+	                         return     IProg::save(osPr) ;    }
+
+	bool	    load_with_comm(std::string &var, std::istream &isPr)	  // Usar estas dos funciones solo si se quiere save or load olny this program
 	                    { 	if ( _cp.load(var, isPr))       // PAra salvar el projecto completo use el save_all del projecto
 						        return true ;
-							return load(var, isPr);					 }
+							return IProg::load(var, isPr);					 }
 } ;
 
 }

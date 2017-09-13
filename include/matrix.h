@@ -218,7 +218,7 @@ Num     &CMatrix_RV<Num>::expand(index row, index col)
 }
 
 template <typename Num>                    //    aumenta la capacidad de rows en: NumRows rows  --- AddRowsCap  ----
-void CMatrix_RV<Num>::AddRowsCap(index addRow = 1)
+void CMatrix_RV<Num>::AddRowsCap(index addRow /*= 1*/)
 {
     if (addRow <= 0) return; // ?
 
@@ -441,7 +441,7 @@ void CMatrix_RA<Num>::swap        (CMatrix_RA& mtx        )
 }
 
         template <typename Num>                    //    aumenta la capacidad de rows en: NumRows rows  --- AddRowsCap  ----
-void CMatrix_RA<Num>::AddRowsCap    (index NumRow=1            )
+void CMatrix_RA<Num>::AddRowsCap    (index NumRow/*=1*/            )
 {   
     if (NumRow <=0) return;
 
