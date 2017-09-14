@@ -279,8 +279,9 @@ class CUnit
 	friend inline const magnitudes& MagnitudesDic() noexcept;
 	friend inline const units     & UnitsDic() noexcept;
 
-    static const double No;   // ?
-	 
+    static const double No;   // ? No=6.02e23;
+	static const char grC[];  // ? = u8"°C"; 
+
     static bool Initialize()
     {
         CUnit("m"       , 1     , ""    ,             "Length"      );
@@ -323,7 +324,7 @@ class CUnit
         CUnit("K"       , 1     , ""     ,             "Temperature");
         CUnit(u8"°C",conversion(1, 273.15), "K"                     );
         CUnit(u8"°C",conversion(1.8, 32),  u8"°F"                   );
-        //CUnit(u8"°C"      , 1     , "grC"                         );
+        //CUnit(u8"°C"    , 1     , "grC"                             );   // why dont work ????
         CUnit("A"       , 1     , ""     ,             "Current"    );
         CUnit("mA"      , 0.001 , "A"                               );
         CUnit("bp"      , 1     , "nt"    ,             "GeneLength");
