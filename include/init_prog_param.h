@@ -45,7 +45,7 @@ template <typename Param_t>  /// Param_t have to be copiable, comparable and str
               const std::string  &etiq, 
 		      const Param_t      &defValue
 			) 
-            : CParamString (pp,  titel, etiq, _v,  defValue	)  {            }
+			: IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
 
 	void    set(const Param_t& value)     { if (value == _value) return; _value = value;  changed();    }
 	Param_t get(                    )const{ return _value;    }
@@ -203,27 +203,27 @@ class CParamNumRange: public CParamBNRange<Num>
     CParamNumRange ( IProg *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
 					 Num min, Num max, Num defValue,
 					const std::string& unit=""					) 
-        : CParamBNRange (pp, titel, etiq, parRef,min,  max,  defValue,unit)
+        : CParamBNRange<Num> (pp, titel, etiq, parRef,min,  max,  defValue,unit)
 	    { 
             if (!inRang(defValue)) 
 			throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
-												+ Titel() 
-												+ "\" ("+ Etiq() + ")" + ", trying to set the default value "
+												+ CParamBNRange<Num>::Titel()
+												+ "\" ("+ CParamBNRange<Num>::Etiq() + ")" + ", trying to set the default value "
 										 ,defValue , *this  );
 	    }
 								/// Num &parRef,   _v used and therefore does not need an external parameter
     CParamNumRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
-					) : CParamBNRange (pp, titel, etiq,min,  max,  defValue,unit)
+					) : CParamBNRange<Num> (pp, titel, etiq,min,  max,  defValue,unit)
 	{ if (!inRang(defValue)) 
 		throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
-											+ Titel() 
-											+ "\" ("+ Etiq() + ")" + ", trying to set the default value " ,
+											+ CParamBNRange<Num>::Titel()
+											+ "\" ("+ CParamBNRange<Num>::Etiq() + ")" + ", trying to set the default value " ,
 									defValue , *this  );
 	}
 	std::ostream	&saveValue	(std::ostream	&osPr) const override   
-	                        {return osPr<<get();} 
+	                        {return osPr<<CParamBNRange<Num>::get();}
     bool        loadValue   (std::istream   &isPr) /*throw( ParamOutOfNumRange) */  override         
 	                        {   Num t; 
 								isPr>>t; 
@@ -232,10 +232,10 @@ class CParamNumRange: public CParamBNRange<Num>
 	                        } 
 	void set(Num value){ if (!inRang(value)) 
 		                    throw ParamOutOfNumRange(std::string("Value out of Range while trying to modify: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")"
+												     + CParamBNRange<Num>::Titel()
+												     + "\" ("+ CParamBNRange<Num>::Etiq() + ")"
 													 , value, *this );
-						  CParamBNRange::set(value) ; 
+						  CParamBNRange<Num>::set(value) ;
 	                    }
 
 };
@@ -256,7 +256,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 		{ for (auto p : _StrValues) 
 			if (p.second==v)
 				return p.first;
-		  throw OutOfNumRange(std::string("Value out of Range while trying to set: ")+Titel() );
+		  throw OutOfNumRange(std::string("Value out of Range while trying to set: ")+CParamBNRange<enumType>::Titel() );
 		}
 	 std::string StringEnumerate()const 
 	 {	std::ostringstream result;
@@ -264,7 +264,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 			result <<  p.first << "(" << int(p.second) <<"), ";
 		return result.str();
 	 }
-	 std::string ToString()const {return ToString(get());}
+	 std::string ToString()const {return ToString(CParamBNRange<enumType>::get());}
 	 bool exist(int v)	        const{		return _IntValues.end()!=_IntValues.find(v); }
 	 bool exist(std::string v)	const{		return _StrValues.end()!=_StrValues.find(v); }
 
@@ -277,8 +277,8 @@ class CParamEnumRange: public CParamBNRange<enumType>
 	          { if (!inRang(defValue)) 
 
 			    throw ParamOutOfEnumRange(std::string("Error contructing parametr: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+												     + CParamBNRange<enumType>::Titel()
+												     + "\" ("+ CParamBNRange<enumType>::Etiq() + ")" + ", tryin to set the default value " ,
 												defValue , *this  );
 	          }									
 											// enumType &parRef,   usa _v y por tanto no necesita un parametro externo
@@ -288,8 +288,8 @@ class CParamEnumRange: public CParamBNRange<enumType>
 					 ) : CParamBNRange<enumType> (pp,  titel,  etiq, min, max, defValue, unit	)
 	          { if (!inRang(defValue)) 
 			    throw ParamOutOfEnumRange(std::string("Error contructing parametr: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+												     + CParamBNRange<enumType>::Titel()
+												     + "\" ("+ CParamBNRange<enumType>::Etiq() + ")" + ", tryin to set the default value " ,
 												defValue , *this  );
 	          }								
 	void set(int value){	if (_IntValues.empty())
@@ -298,33 +298,33 @@ class CParamEnumRange: public CParamBNRange<enumType>
 								auto p=_IntValues.find(value);
 								if (p==_IntValues.end())	
 									throw ParamOutOfEnumRange(std::string("Value out of Range while trying to modify: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", with know values "  + StringEnumerate() ,
+												     + CParamBNRange<enumType>::Titel()
+												     + "\" ("+ CParamBNRange<enumType>::Etiq() + ")" + ", with know values "  + StringEnumerate() ,
 												value , *this  );
-								CParamBNRange::set(enumType(p->second));
+								CParamBNRange<enumType>::set(enumType(p->second));
 							}
 	                    }
 	void set(const std::string& value){auto p=_StrValues.find(value);
 								if (p==_StrValues.end())	 
 									throw ParamOutOfEnumRange(std::string( "Value \"" ) + value + "\" out of Range while trying to modify: \"" 
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", with have known values: "  + StringEnumerate()  );
-								CParamBNRange::set(p->second);
+												     + CParamBNRange<enumType>::Titel()
+												     + "\" ("+ CParamBNRange<enumType>::Etiq() + ")" + ", with have known values: "  + StringEnumerate()  );
+		                        CParamBNRange<enumType>::set(p->second);
 								set(p->second);
 	                    }
 	void set(enumType value){ if (!inRang(value))  
 									throw ParamOutOfEnumRange(std::string("Value out of Range while trying to modify: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", with know values "  + StringEnumerate() ,
+												     + CParamBNRange<enumType>::Titel()
+												     + "\" ("+ CParamBNRange<enumType>::Etiq() + ")" + ", with know values "  + StringEnumerate() ,
 												value , *this  );
-							 CParamBNRange::set(value) ; 
+		                            CParamBNRange<enumType>::set(value) ;
 	                    }
 
 	std::ostream &saveValue	(std::ostream	&osPr) const override   
 	                        {	for (auto p : _StrValues) 
-									if (p.second==get())
+									if (p.second==CParamBNRange<enumType>::get())
 										return osPr<<p.first;
-								return osPr<< int(get());
+								return osPr<< int(CParamBNRange<enumType>::get());
 							} 
     bool        loadValue   (std::istream   &isPr) override         
 	                        {   std::string t; 

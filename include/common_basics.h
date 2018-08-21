@@ -33,11 +33,12 @@
 
 #include <cctype> 
 #include <string>
-#include <sstream> 
+#include <cstring>
+#include <sstream>
 #include <stdexcept>
 
 
-inline char *clone_c_str   (const char *str) {return strcpy (new char[strlen(str) +1] , str);}  // ;char *clone_c_str(const char *str)
+inline char *clone_c_str   (const char *str) {return strcpy (new char[std::strlen(str) +1] , str);}  // ;char *clone_c_str(const char *str)
 inline char *clone_trim_str(const char *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
 													//char *clone_trim_str(const char *str)
 {	if(str && str[0]) 
@@ -175,14 +176,14 @@ template <class Num>
 class NumRangA	: public NumRang<Num>	// -------------------------------------- NumRangA<Numeric> 	--------------
 {public: 
 	NumRangA(					   ):					ave(0)				{} 
-explicit NumRangA(	 Num av		   ):NumRang(av),		ave(av)				{}
-	NumRangA(Num mi,         Num ma):NumRang(mi,ma),	ave(NumRang::Ave()) {}
-	NumRangA(Num mi, Num av, Num ma):NumRang(mi,ma),	ave(av)				{}
+explicit NumRangA(	 Num av		   ):NumRang<Num>(av),		ave(av)				{}
+	NumRangA(Num mi,         Num ma):NumRang<Num>(mi,ma),	ave(NumRang<Num>::Ave()) {}
+	NumRangA(Num mi, Num av, Num ma):NumRang<Num>(mi,ma),	ave(av)				{}
 
-	void Set(					   ){NumRang::Set(  )   ;ave=0				;}
-	void Set(		Num av		   ){NumRang::Set(av)   ;ave=av				;}
-	void Set(Num mi,         Num ma){NumRang::Set(mi,ma);ave=NumRang::Ave() ;}
-	void Set(Num mi, Num av, Num ma){NumRang::Set(mi,ma);ave=av				;}
+	void Set(					   ){NumRang<Num>::Set(  )   ;ave=0				;}
+	void Set(		Num av		   ){NumRang<Num>::Set(av)   ;ave=av				;}
+	void Set(Num mi,         Num ma){NumRang<Num>::Set(mi,ma);ave=NumRang<Num>::Ave() ;}
+	void Set(Num mi, Num av, Num ma){NumRang<Num>::Set(mi,ma);ave=av				;}
 
 	void SetAve(     Num av        ){	    ave=av;					 }
 
