@@ -215,7 +215,7 @@ class DegRes			//---------------------------------------------------	DegRes	----
 
 
 		template <typename Num>
- std::string toString_Val_in_Range(Num val, NumRang<Num> &NR)
+ std::string toString_Val_in_Range(Num val, const NumRang<Num> &NR)
 {     
 	std::ostringstream result;
 	result << val << " in range [" << NR.Min() <<", "<< NR.Max() << "]";
@@ -237,7 +237,7 @@ class OutOfNumRange : public std::out_of_range
 	explicit OutOfNumRange ( const std::string& what_arg ) : out_of_range(what_arg + " (Out of numeric rang)" ){}
 
 		template<typename Num>
-	explicit OutOfNumRange ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+	explicit OutOfNumRange ( const std::string& what_arg, Num invalidValue, const NumRang<Num>& NR )
 		: out_of_range(what_arg + " (Out of numeric rang, trying to set " + toString_Val_in_Range(invalidValue, NR) + ")"   ) 
 		{}
 };

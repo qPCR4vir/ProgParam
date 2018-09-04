@@ -173,7 +173,7 @@ class ParamOutOfNumRange : public OutOfNumRange
 { public: 
 	explicit ParamOutOfNumRange ( const std::string& what_arg ): OutOfNumRange(what_arg ){}
 		template<typename Num>
-	ParamOutOfNumRange ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+	ParamOutOfNumRange ( const std::string& what_arg, Num invalidValue, const NumRang<Num>& NR )
 		: OutOfNumRange (  what_arg ,  invalidValue,  NR ) 
 		{}
 };
@@ -182,11 +182,11 @@ class ParamOutOfEnumRange : public ParamOutOfNumRange
 { public: 
 	explicit ParamOutOfEnumRange ( const std::string& what_arg ): ParamOutOfNumRange(what_arg ){}
 		template<typename Num>
-	ParamOutOfEnumRange ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+	ParamOutOfEnumRange ( const std::string& what_arg, Num invalidValue, const NumRang<Num>& NR )
 		: ParamOutOfNumRange (  what_arg , int(invalidValue),  NumRang<int>(   int( NR.Min() )   ,   int( NR.Max() )    )    )
 		{}
 		template<typename Num>
-	ParamOutOfEnumRange ( const std::string& what_arg, int invalidValue, NumRang<Num>& NR ) 
+	ParamOutOfEnumRange ( const std::string& what_arg, int invalidValue, const NumRang<Num>& NR )
 		: ParamOutOfNumRange (  what_arg , int(invalidValue),  NumRang<int>(   int( NR.Min() )   ,   int( NR.Max() )    )    )
 		{}
 };	 
@@ -205,7 +205,7 @@ class CParamNumRange: public CParamBNRange<Num>
 					const std::string& unit=""					) 
         : CParamBNRange<Num> (pp, titel, etiq, parRef,min,  max,  defValue,unit)
 	    { 
-            if (!inRang(defValue)) 
+            if (!CParamBNRange<Num>::inRang(defValue))
 			throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
 												+ CParamBNRange<Num>::Titel()
 												+ "\" ("+ CParamBNRange<Num>::Etiq() + ")" + ", trying to set the default value "
@@ -216,7 +216,7 @@ class CParamNumRange: public CParamBNRange<Num>
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
 					) : CParamBNRange<Num> (pp, titel, etiq,min,  max,  defValue,unit)
-	{ if (!inRang(defValue)) 
+	{ if (!CParamBNRange<Num>::inRang(defValue))
 		throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
 											+ CParamBNRange<Num>::Titel()
 											+ "\" ("+ CParamBNRange<Num>::Etiq() + ")" + ", trying to set the default value " ,
@@ -230,7 +230,7 @@ class CParamNumRange: public CParamBNRange<Num>
 	                            set(t);
 								return true;
 	                        } 
-	void set(Num value){ if (!inRang(value)) 
+	void set(Num value){ if (!CParamBNRange<Num>::inRang(value))
 		                    throw ParamOutOfNumRange(std::string("Value out of Range while trying to modify: \"")
 												     + CParamBNRange<Num>::Titel()
 												     + "\" ("+ CParamBNRange<Num>::Etiq() + ")"
@@ -274,7 +274,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 						enumType min, enumType max, enumType defValue,
 						const std::string& unit=""
 					 ) : CParamBNRange<enumType> (pp,  titel,  etiq, parRef, min, max, defValue, unit	)
-	          { if (!inRang(defValue)) 
+	          { if (!CParamBNRange<enumType>::inRang(defValue))
 
 			    throw ParamOutOfEnumRange(std::string("Error contructing parametr: \"")
 												     + CParamBNRange<enumType>::Titel()
@@ -312,7 +312,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 		                        CParamBNRange<enumType>::set(p->second);
 								set(p->second);
 	                    }
-	void set(enumType value){ if (!inRang(value))  
+	void set(enumType value){ if (!CParamBNRange<enumType>::inRang(value))
 									throw ParamOutOfEnumRange(std::string("Value out of Range while trying to modify: \"")
 												     + CParamBNRange<enumType>::Titel()
 												     + "\" ("+ CParamBNRange<enumType>::Etiq() + ")" + ", with know values "  + StringEnumerate() ,

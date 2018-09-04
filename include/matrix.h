@@ -40,7 +40,7 @@
 #include <vector>
 #include <string>
 
-
+#if 0      /// \todo implement this. By now exclude CMatrix_RV  --
     /// an Array (std::vector) of Rows (std::vector) of Num - an implementation detail for the class CTable
     /// 
     /// \todo decide what is best: a real n x m matrix or a table with variable length rows
@@ -77,7 +77,7 @@ public:
                                                             for (RowType& r : _mtx)
                                                                 r.resize(NumColumns);
                                                             _numCol = NumColumns;
-                                                            _capCol = std::max(_capCol, CapColumns);   // ?? 
+                                                            _capCol = std::max(_capCol, _numCol);   // ??
                                                         }    
 
     Num   &operator() (index row, index col    )   { 
@@ -102,11 +102,11 @@ public:
             /// aumenta la cap de rows en: NumRows rows
     void    AddRowsCap    (index NumRows=1        ); 
 
-            /// aumenta el num de rows en: NumRows rows
+            /// aumenta el num de rows en: NumRows rows and set the current row to the previous last row - to beging to use the new
     RowType&    AddRows        (index NumRows=1     )     {                     
-                                                            _cr=_numRow; 
-                                                            _cc=0; 
-                                                            Expand2RowsCap ( _numRow= _numRow + NumRows ); 
+                                                            _cr=_mtx.size()-1;
+                                                            _cc=0;
+                                                            _mtx.resize ( _mtx.size() + NumRows );
                                                             return _mtx[_cr]; 
                                                         }                                   
     index   capacityRow (                    )const    { return _mtx.capacity();}
@@ -220,7 +220,7 @@ Num     &CMatrix_RV<Num>::expand(index row, index col)
 template <typename Num>                    //    aumenta la capacidad de rows en: NumRows rows  --- AddRowsCap  ----
 void CMatrix_RV<Num>::AddRowsCap(index addRow /*= 1*/)
 {
-    if (addRow <= 0) return; // ?
+    //if (addRow <= 0) return; // ?
 
     index NumRow = totalRow();
     _mtx.resize(NumRow+);
@@ -231,6 +231,7 @@ void CMatrix_RV<Num>::AddRowsCap(index addRow /*= 1*/)
     }
 }
 
+#endif
 
 
     using index = int ;    
@@ -339,10 +340,13 @@ public:
                                                             for (index r=0; r<totalRow();r++) 
                                                                 operator()(r,col)=num;
                                                         }
-    void    Initialize   (             const Num& num)  { 
+    void    Initialize   (                   Num  num)  {
                                                             for (index r=0; r<totalRow();r++)
-                                                               for (index c=0, RowType row=Row(r); c<totalCol();c++) 
+                                                            {
+                                                                RowType row=Row(r) ;
+                                                                for (index c=0; c<totalCol();c++)
                                                                    row[c]=num;
+                                                            }
                                                         }
     RowType Row(index row)                              { 
                                                             assert(row<totalRow() ); 
@@ -367,15 +371,15 @@ public:
     index AddRowTit      (const std::string &newRowTit) { _titRows.push_back     (newRowTit); return  index(_titRows.size());}
     void CreateMatrix    (index capRow, index capCol)
                         {                                                                                         /* assert (!_mtx); */
-                            forceResize( capRow > _titRows   .size() ? capRow : _titRows   .size() , 
-                                         capCol > _titColumns.size() ? capCol : _titColumns.size()   );                                  
+                            CMatrix_RA<Num>::forceResize( capRow > _titRows   .size() ? capRow : _titRows   .size() ,
+                                                          capCol > _titColumns.size() ? capCol : _titColumns.size()   );
                         }// si predices las posibles dimenciones
     void CreateMatrix    (index capRow)                
                         {                                                                                            /* assert (!_mtx); */
-                            forceResize( std::max <index>(capRow, _titRows   .size() )  , static_cast<index>(_titColumns.size()     ));                                 
+                            CMatrix_RA<Num>::forceResize( std::max <index>(capRow, _titRows   .size() )  , static_cast<index>(_titColumns.size()     ));
                         }// si predices las posibles dimenciones
-    void        CreateMatrix    (             )                { /*assert (!_mtx);*/ forceResize(_titRows.size(), _titColumns.size() );    }// deduciendo las dimenc a partir de los tit
-    index       AddRow     (const std::string &newRowTit)    { AddRowTit(newRowTit); AddRows(); return totalRow()-1;}
+    void        CreateMatrix    (             )                { /*assert (!_mtx);*/ CMatrix_RA<Num>::forceResize(_titRows.size(), _titColumns.size() );    }// deduciendo las dimenc a partir de los tit
+    index       AddRow     (const std::string &newRowTit)    { AddRowTit(newRowTit); CMatrix_RA<Num>::AddRows(); return CMatrix_RA<Num>::totalRow()-1;}
     std::string TitColumn  (index  Col) const{    return _titColumns.at(Col);    }
     std::string TitRow     (index  Row) const{    return    _titRows.at(Row);    }
     std::string TitTable   (          ) const{    return    _titTable       ;    }

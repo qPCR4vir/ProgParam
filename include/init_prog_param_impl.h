@@ -153,7 +153,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 					) : CParamBNRange ( pp,  titel,  etiq, _v, min,  max,  defValue, unit )  
 	          {  
 	          }
-	void set(Num value){ if (!inRang(value)) ///  \todo: Incluir value y rang que no concuerdan en mensaje to throw
+	void set(Num value){ if (!NumRang<Num>::inRang(value)) ///  \todo: Incluir value y rang que no concuerdan en mensaje to throw
 		                    throw OutOfNumRange(std::string("Value out of Range while trying to set: ")+Titel(), value, *this );
 	                     if (_value==value) return; 
 						 _value=value ; 
@@ -229,10 +229,10 @@ class IProg : public IBParam // -------	  Clase    ----------
 //For such parameter please, add any comment in the next line. 
 //Others parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text 
 //and will ignore the end. 
-//Any line without a valid etiquette will be ignore (they are comments!).” 
+//Any line without a valid etiquette will be ignore (they are comments!).ï¿½ 
 //Only the last valid value of each parameter will be used.
 //For not defined parameters, the previous value (from the previously active project 
-//or from the program´s default) will be use.
+//or from the programï¿½s default) will be use.
 //Send questions please to: ArielVina.Rodriguez@fli.bund.de
 
 class CProject : public IProg
@@ -283,12 +283,12 @@ public:
 			 "While loading, the text between the beginning of a line and the first : will be taken as\n "
 			 "an etiquette (discarding surrounding but not internal spaces). \n"
 			 "IF the etiquette is know (valid), the rest of the line will be use to deduce the value of the parameter. \n"
-			 "Some parameter (like file´s names) will assume this rest-line-text entirely as his valid value. \n"
+			 "Some parameter (like fileï¿½s names) will assume this rest-line-text entirely as his valid value. \n"
 			 "For such parameter please, add any comment in the next line. \n"
 			 "Other parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text and ignore the end. \n"
-			 "Any line without a valid etiquette will be ignore (they are comments!).” \n"
+			 "Any line without a valid etiquette will be ignore (they are comments!).ï¿½ \n"
 			 "Only the last valid value of each parameter will be used\n"
-			 "For not defined parameters, the previous value (from the previously active project or from the program´s default) will be use.\n"
+			 "For not defined parameters, the previous value (from the previously active project or from the programï¿½s default) will be use.\n"
 			 "Direct questions please to ArielVina.Rodriguez@fli.bund.de\n"
 			;
 
