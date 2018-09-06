@@ -54,3 +54,17 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+
+
+*.ninja*
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+.idea/
+cmake_install.cmake
+*.DS_Store
+
+*.db
+*.opendb
+.vscode
