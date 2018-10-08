@@ -135,6 +135,8 @@ class CParamString: public IParam
 							return true;
 	                    } 
 };
+
+/// deprecated. Use CParamString
 class CParamC_str: public IParam, public C_str
 {public:
     //CParamC_str (IProg *pp, C_str &parRef,    // Acepta un parametro y por tanto no usa _v. Por compatibilidad.

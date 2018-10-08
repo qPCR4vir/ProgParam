@@ -52,16 +52,21 @@ namespace RTunits  ///< Run-Time defined magnitude untis, convertions, quantitie
 	std::ostream& operator<<(std::ostream& o, const CUnit& u);
 
     /// Portable Unicode Unit names
-    constexpr char grC[]   = u8"\u00B0C";   //u8"�C";
-    constexpr char grF[]   = u8"\u00B0F";   //u8"°F";
-    constexpr char uL[]    = u8"\u00B5L";   //u8"µL";
-    constexpr char ugr[]   = u8"\u00B5g";   //u8"µg";
-    constexpr char uM[]    = u8"\u00B5M";   //u8"µM";
-    constexpr char umol[]  = u8"\u00B5mol"; //u8"µmol";
-    constexpr char umol_L[]= u8"\u00B5mol/L"  ;  // µmol/L
-    constexpr char pmol_uL[]= u8"pmol/\u00B5L";  // pmol/µL
-    constexpr char ugr_L[] = u8"\u00B5g/L"    ;  // µg/L
-    constexpr char pgr_uL[]= u8"pg/\u00B5L"   ;  // pmol/µL
+    constexpr char grC[]    = u8"\u00B0C";      // u8"°C";
+    constexpr char grF[]    = u8"\u00B0F";      // u8"°F";
+    constexpr char uL[]     = u8"\u00B5L";      // u8"µL";
+    constexpr char ugr[]    = u8"\u00B5g";      // u8"µg";
+    constexpr char uM[]     = u8"\u00B5M";      // u8"µM";
+    constexpr char umol[]   = u8"\u00B5mol";    // u8"µmol";
+    constexpr char umol_L[] = u8"\u00B5mol/L"  ;// µmol/L
+    constexpr char pmol_uL[]= u8"pmol/\u00B5L" ;// pmol/µL
+    constexpr char ugr_L[]  = u8"\u00B5g/L"    ;// µg/L
+    constexpr char pgr_uL[] = u8"pg/\u00B5L"   ;// pmol/µL
+    constexpr char cop_uL[] = u8"cop/\u00B5L"  ;// cop/µL
+
+    /// Numerical const
+    constexpr double No = 6.02e23;
+
 
 
 
@@ -292,8 +297,6 @@ class CUnit
 	friend inline const magnitudes& MagnitudesDic() noexcept;
 	friend inline const units     & UnitsDic() noexcept;
 
-    static const double No;   // ? No=6.02e23;
-
     static bool Initialize()
     {
         CUnit("m"       , 1     , ""    ,             "Length"      );
@@ -318,7 +321,7 @@ class CUnit
         CUnit("g"       , 0.001 , "kg"   ,             "Mass"       );
         CUnit("g"       , 1000  , "mg"                              );
         CUnit("mg"      , 1000  , ugr                               );
-        CUnit(u8"\u00B5g", 1000 , "ng"                              );
+        CUnit(ug        , 1000 , "ng"                              );
         CUnit("ng"      , 1000  , "pg"                              );
         CUnit("pg"      , 1000  , "fg"                              );
         CUnit("tone"    , 1000  , "kg"                              );
@@ -354,11 +357,11 @@ class CUnit
         CUnit("particle", 1     , "cop"                             );
         //CUnit("M"       , 1     , ""    ,             "molarity"  );
         CUnit("M"       , No    , "cop/L" ,             "molarity"  );
-        CUnit(uL        ,1000   , "cop/L"                           );
+        CUnit(cop_uL    ,1000   , "cop/L"                           );
         CUnit("M"       , 1     , "mol/L"                           );
         CUnit("M"       , 1000  , "mM"                              );
         CUnit("mM"      , 1000  , uM                                );
-        CUnit(uM        , 1     , umol_L                  );
+        CUnit(uM        , 1     , umol_L                            );
         CUnit(uM        , 1000  , "nM"                              );
         CUnit("nM"      , 1000  , "pM"                              );
         CUnit("pM"      , 1000  , "fM"                              );
