@@ -39,7 +39,7 @@ units                CUnit::_Units ;
 magnitudes           CUnit::_Magnitudes;
 bool                 CUnit::_initialized = CUnit::Initialize();
 const double         CUnit::No=6.02e23;
-const char           CUnit::grC[]  = u8"°C"; 
+
  
 
 
