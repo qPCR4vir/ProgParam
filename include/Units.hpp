@@ -321,7 +321,7 @@ class CUnit
         CUnit("g"       , 0.001 , "kg"   ,             "Mass"       );
         CUnit("g"       , 1000  , "mg"                              );
         CUnit("mg"      , 1000  , ugr                               );
-        CUnit(ug        , 1000 , "ng"                              );
+        CUnit(ugr        , 1000 , "ng"                              );
         CUnit("ng"      , 1000  , "pg"                              );
         CUnit("pg"      , 1000  , "fg"                              );
         CUnit("tone"    , 1000  , "kg"                              );
@@ -357,7 +357,7 @@ class CUnit
         CUnit("particle", 1     , "cop"                             );
         //CUnit("M"       , 1     , ""    ,             "molarity"  );
         CUnit("M"       , No    , "cop/L" ,             "molarity"  );
-        CUnit(cop_uL    ,1000   , "cop/L"                           );
+        CUnit(cop_uL    ,1000000, "cop/L"                           );
         CUnit("M"       , 1     , "mol/L"                           );
         CUnit("M"       , 1000  , "mM"                              );
         CUnit("mM"      , 1000  , uM                                );
