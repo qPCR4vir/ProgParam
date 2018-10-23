@@ -67,7 +67,7 @@ inline char *clone_trim_str(const char *str)
 	return NewStr;
 }
 
-///   Elimina espacios al principio y al final
+///   Elimina espacios al principio y al final \deprecated use string and string_view
 template<typename CharType>
 inline CharType *clone_trim(const CharType *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
 													//char *clone_trim_str(const char *str)
@@ -109,7 +109,7 @@ inline std::basic_string<_Elem, _Traits, _Alloc> trim_string(const std::basic_st
 	return std::basic_string<_Elem, _Traits, _Alloc>();
 }
 
-///  Clase para lidiar con las string como file name y sec que deben ser copiadas y liberadas todo el tiempo. Copy() vs Take() !!!!
+///  Clase para lidiar con las string como file name y sec que deben ser copiadas y liberadas todo el tiempo. Copy() vs Take() !!!!  \deprecated use string and string_view
 class C_str
 {public:
 /*explicit*/ C_str()													:_s(clone_c_str		("")){}
@@ -144,7 +144,7 @@ public:
     explicit NumRang(Num av		  ):min(av),			max(av){}
 	NumRang(Num mi,         Num ma):min(mi),			max(ma){}
 
-	void Set(					   ){min=0 			; max =0   ;}
+	void Set(					   ){}
 	void Set(		Num av		   ){min=av			; max =av  ;}
 	void Set(Num mi,         Num ma){min=mi			; max =ma  ;}
 	void Set(     NumRang    R     ){min=R.min		; max=R.max;}

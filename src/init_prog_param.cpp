@@ -57,9 +57,9 @@ IProg::IProg (const std::string& titel, CProject *proj)
 
 bool    CProject::load()
 {
-    std::ifstream  isPr( _ProjetFileName);
+    std::ifstream  isPr( _ProjectFileName);
     if (!isPr) 
-        throw std::ios_base::failure("Could not open project file: "+_ProjetFileName );
+        throw std::ios_base::failure("Could not open project file: "+_ProjectFileName );
 
     std::string line ;
     while (std::getline (isPr, line))

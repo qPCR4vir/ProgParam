@@ -379,6 +379,150 @@ class CParamNumMinMax: public IBParam
     NumRang<Num>   get()const { return _v; }
     NumRang<Num>&  getRef()   { return _v; }
 };
+
+
+//typedef CEspProg *pCEspProgParam ;
+/// Clase base para los parametros "Especificos" de programas "Especificos".
+/// derivar para concretar parametros comunes. Mantiene link a proj de los prog Espec que los usan.
+///
+//How to use?
+// Each parameter have an unique identificator or etiquette.
+// While loading, the text between the beginning of a line and the first : will be taken as
+// an etiquette (discarding surrounding but not internal spaces).
+//If the etiquette is known (valid), the rest of the line will be use to deduce the value of the parameter.
+//Some parameter (like names of files) will assume this rest-line-text entirely as his valid value.
+//For such parameter please, add any comment in the next line.
+//Others parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text
+//and will ignore the end.
+//Any line without a valid etiquette will be ignore (they are comments!).�
+//Only the last valid value of each parameter will be used.
+//For not defined parameters, the previous value (from the previously active project
+//or from the program�s default) will be use.
+//Send questions please to: ArielVina.Rodriguez@fli.bund.de
+
+	class CProject : public IProg
+	{
+		std::string		    _defPr ;
+		std::string		    _ProjectFileName ;
+		std::vector<IProg*> _ProgList;
+	public:
+		CProject(std::string titel, std::string	prFname="", std::string	defProFN="Def.Proj.txt")
+				:   IProg           (titel),
+					_defPr          (defProFN)  ,
+					_ProjectFileName (prFname.empty () ? _defPr :  prFname )
+		{
+		}
+
+		~CProject()override { }
+
+		void	    ProjectFile	(const std::string &ProjetFileName){	_ProjectFileName=trim_string(ProjetFileName);	}
+		std::string ProjectFile	(                            )const{	return _ProjectFileName;	}
+
+		bool load		();
+		bool load_defPr	()                                  { ProjectFile(_defPr);         return load();	}
+		bool load	    (const std::string &ProjectFileName){ ProjectFile(ProjectFileName); return load();	}
+
+		///  \todo  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
+		void saveToFile	(const char *ProjectFileName) const{	std::ofstream osPr(ProjectFileName);
+			save(osPr); }
+
+		void save		()		const		            {   saveToFile(_ProjectFileName.c_str())	;   }
+		void save_defPr	()                              {   ProjectFile(_defPr);
+			save();	    }
+		void save_asDefPr()		const		            {	saveToFile(_defPr.c_str())	        ;   }
+		void save	 (const std::string &ProjectFileName){	ProjectFile(ProjectFileName);
+			save();	    }
+
+		virtual void saveTMP() const            /// Reescribe el projecto actual. Pensar algo mejor? Preguntar al user? usar # conscuti?
+		{	  save();	}
+
+
+		std::ostream	&save(std::ostream	&osPr)  const override
+		{
+			for(auto p : _ProgList)
+				p->save(osPr) ;		     // save all subprograms
+			IProg::save(osPr) ;          // save onw parametr list
+
+			osPr<< std::endl<<std::endl<<
+				"How to use? \n Each programs parameter have an unique identificator or etiquette. \n "
+				"While loading, the text between the beginning of a line and the first : will be taken as\n "
+				"an etiquette (discarding surrounding but not internal spaces). \n"
+				"IF the etiquette is know (valid), the rest of the line will be use to deduce the value of the parameter. \n"
+				"Some parameter (like file�s names) will assume this rest-line-text entirely as his valid value. \n"
+				"For such parameter please, add any comment in the next line. \n"
+				"Other parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text and ignore the end. \n"
+				"Any line without a valid etiquette will be ignore (they are comments!).� \n"
+				"Only the last valid value of each parameter will be used\n"
+				"For not defined parameters, the previous value (from the previously active project or from the program�s default) will be use.\n"
+				"Direct questions please to ArielVina.Rodriguez@fli.bund.de\n"
+					;
+
+			return (osPr) ;
+
+		}   // por que solo funciona con el IProg:: ???
+		bool            load    (std::string &etiq, std::istream  &isPr) override
+//		bool	            load_all(std::string &etiq, std::ifstream &isPr)	//override
+		{
+			for(auto p : _ProgList)
+				if ( p->load(etiq, isPr))       // load from any subprogram
+					return true ;
+			return IProg::load(etiq, isPr);		  // load from onw parametr list
+		}
+
+		int		Run (IProg &prog)	override                    //   ??????
+		{
+			saveTMP( ) ;
+			return prog.Run();
+		}
+
+		void AddProg (IProg* prog) {_ProgList.push_back(prog);}
+
+	};
+
+	class CCommProgParam : public IProg
+	{	CProject *_proj;
+	public:
+		CCommProgParam  (const std::string& titel,       CProject *proj=nullptr)
+				: IProg(titel,proj),   _proj(proj) {}
+		~CCommProgParam() override	{}
+
+		//std::ostream	&save(std::ostream	&osPr 				 ) const override
+		//                    {
+		//						assert(("attempt to use an uninitialized project pointer in save_all",_proj));
+		//						return _proj->save(osPr);
+		//                    }
+		//bool	    load(std::string     &etiq, std::istream &isPr) override
+		//                    {
+		//						assert(("attempt to use an uninitialized project pointer in load_all",_proj));
+		//						return _proj->load(etiq,isPr);
+		//                    }
+		void        AddProgToProject(IProg *p)
+		{
+			assert(("attempt to use an uninitialized project pointer in AddProgToProject",_proj));
+			_proj->AddProg(p);
+		}
+		virtual std::string  MakeRuningName()const {return "";}
+
+	};
+
+	class	CEspProg  : public IProg
+	{public:										// Permite no duplicar los parametros comunes en los parametros especificos
+		explicit CEspProg(const std::string& titel, CCommProgParam &commParam )
+				: _cp(commParam), IProg(titel )
+		{ _cp.AddProgToProject(this);}
+
+		CCommProgParam &_cp;
+
+		std::ostream	&save_with_comm(std::ostream &osPr)	const		   // Save all needed parameters for this program, and not only the specific ones
+		{          _cp.save(osPr) ;
+			return     IProg::save(osPr) ;    }
+
+		bool	    load_with_comm(std::string &var, std::istream &isPr)	  // Usar estas dos funciones solo si se quiere save or load olny this program
+		{ 	if ( _cp.load(var, isPr))       // PAra salvar el projecto completo use el save_all del projecto
+				return true ;
+			return IProg::load(var, isPr);					 }
+	} ;
+
 }
 using namespace Programs ;
 
