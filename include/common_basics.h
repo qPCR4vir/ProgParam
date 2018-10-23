@@ -3,7 +3,7 @@
 *             definitions & I/O from projects files or UI
 * available at: https://github.com/qPCR4vir/ProgParam
 *
-* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2018, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *    This program is free software : you can redistribute it and / or modify
 *    it under the terms of the GNU General Public License as published by
@@ -38,10 +38,13 @@
 #include <stdexcept>
 
 
-inline char *clone_c_str   (const char *str) {return strcpy (new char[std::strlen(str) +1] , str);}  // ;char *clone_c_str(const char *str)
-inline char *clone_trim_str(const char *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
-													//char *clone_trim_str(const char *str)
-{	if(str && str[0]) 
+/// \deprecated use string and string_view
+inline char *clone_c_str   (const char *str)
+{return strcpy (new char[std::strlen(str) +1] , str);}
+
+/// elimina espacios al principio y al final \deprecated use string and string_view
+inline char *clone_trim_str(const char *str)
+{	if(str && str[0])
 	{							// llegado aqui - tiene al menos un char !
 		size_t  f, i ;
 		for ( i=0; str[i] && isspace(str[i]); ++i );   // salta espacios al principio
@@ -64,7 +67,8 @@ inline char *clone_trim_str(const char *str)		// definida en    :   init_prog_pa
 	return NewStr;
 }
 
-template<typename CharType>               //   elimina espacios al principio y al final
+///   Elimina espacios al principio y al final
+template<typename CharType>
 inline CharType *clone_trim(const CharType *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
 													//char *clone_trim_str(const char *str)
 {	if(str && str[0]) 

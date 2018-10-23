@@ -1,7 +1,7 @@
 /**
 * ProgParam - manage subprograms & programs parameters:
 *             definitions & I/O from projects files or UI
-* Copyright (C) 2013-2016, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2018, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *    This program is free software : you can redistribute it and / or modify
 *    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <assert.h>
+#include <cassert>
 #include <time.h>
 #include <map>
 #include <vector>

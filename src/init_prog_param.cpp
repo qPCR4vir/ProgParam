@@ -40,39 +40,33 @@ IParam::IParam (  IProg *pp,
                 pp->insertParam(this); 
             }    
 
-void     IParam::SetEtiq(std::string etiq, IProg *prog)
+void     IParam::SetEtiq(std::string etiq,    ///< Human readable
+                         IProg       *prog)
 { 
     auto param = prog->_parametrs[_etiq];     /// \todo revisar posibles inconsistencias   !!!!!!!!!!!!!!!!
     prog->_parametrs.erase(_etiq);
     _etiq=etiq;
     prog->_parametrs[_etiq]=param;
-}       ///< Human readable
+}
 
-
-//void IParam::insertParam(IProg *pp)  
-//{   pp->_parametrs[_etiq]= this;
-//}
-
-IProg::IProg (const std::string& titel, CProject *proj) // CProject *proj=nullptr)
+IProg::IProg (const std::string& titel, CProject *proj)
     :IBParam( titel)
 { 
     if (proj) proj->AddProg (this);
 }
-
 
 bool    CProject::load()
 {
     std::ifstream  isPr( _ProjetFileName);
     if (!isPr) 
         throw std::ios_base::failure("Could not open project file: "+_ProjetFileName );
-        
-    isPr >> std::skipws ;
 
     std::string line ;
     while (std::getline (isPr, line))
     {
-        std::string    etiq;
+        std::string etiq;
         std::istringstream is_line{line};
+        is_line >> std::skipws ;
         if (!std::getline(is_line, etiq, ':').good())  continue;
         etiq=trim_string(etiq) ;
         load(etiq, is_line);
