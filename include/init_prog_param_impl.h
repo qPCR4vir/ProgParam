@@ -121,7 +121,7 @@ class IParam : public IBParam
 	                                {return osPr;} 
                                             /// Default behavior, not yet a real implementation 
     virtual bool        loadValue	(std::istream   &isPr)  ///<   throw( std::out_of_range).  
-	                                {return false;}         // =0;   ??    ?????????????????
+	                                {return false;}
 
 	  ~IParam()override{}
 };
@@ -306,8 +306,8 @@ public:
 
     int		Run (IProg &prog)	override                    //   ??????
 	{	
-    saveTMP( ) ; 
-	return prog.Run();
+		saveTMP( ) ;
+		return prog.Run();
 	}
 
 	void AddProg (IProg* par) {_ProgList.push_back(par);}

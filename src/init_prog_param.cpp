@@ -1,7 +1,7 @@
 /**
 * ProgParam - manage subprograms & programs parameters:
 *             definitions & I/O from projects files or UI
-* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2018, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *    This program is free software : you can redistribute it and / or modify
 *    it under the terms of the GNU General Public License as published by
@@ -21,24 +21,19 @@
 *  @autor Ariel Vina-Rodriguez (qPCR4vir)
 */
 
-//#include "StdAfx.h"
-#pragma unmanaged
-#include "init_prog_param.h"
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
+#include <cassert>
 #include <iostream>
 #include <string>
-
 #include <iomanip>
-using namespace std;
+
+#include "init_prog_param.h"
 
 IParam::IParam (  IProg *pp, 
                   const std::string& titel, 
                   const std::string& etiq, 
                   const std::string& unit ) 
             : IBParam(titel), 
-              _etiq( etiq==""? Titel() : etiq ),  /// si no quieres introducir una etiq puedes usar el Titel !!
+              _etiq( !etiq.empty() ? etiq : Titel()),  /// si no quieres introducir una etiq puedes usar el Titel !!
               _unit( unit )
             {  
                 assert (pp); 
@@ -58,7 +53,7 @@ void     IParam::SetEtiq(std::string etiq, IProg *prog)
 //{   pp->_parametrs[_etiq]= this;
 //}
 
-IProg::IProg (const string& titel, CProject *proj) // CProject *proj=nullptr)
+IProg::IProg (const std::string& titel, CProject *proj) // CProject *proj=nullptr)
     :IBParam( titel)
 { 
     if (proj) proj->AddProg (this);
@@ -66,43 +61,23 @@ IProg::IProg (const string& titel, CProject *proj) // CProject *proj=nullptr)
 
 
 bool    CProject::load()
-{   streamoff i=0;
-    string    etiq ;    
-    ifstream  isPr( _ProjetFileName); 
+{
+    std::ifstream  isPr( _ProjetFileName);
     if (!isPr) 
-        throw std::ios_base::failure(string("Could not open project file: ")+_ProjetFileName );
+        throw std::ios_base::failure("Could not open project file: "+_ProjetFileName );
         
-    //    return false;     ///  \todo: en realidad hay que trabajar con las exepciones aqui !!!!!!!!!!!!!!!!!
-   // isPr.exceptions(ifstream::failbit | ifstream::badbit);   // no eofbit: http://www.cplusplus.com/reference/iostream/ios/exceptions/
-    isPr >> skipws ;
+    isPr >> std::skipws ;
 
-    do {    i=isPr.tellg();        // not good !!!
-            //etiq ;                
-            getline (isPr, etiq) ;    
-            if (string::npos == etiq.find(":") ) 
-                continue;
-            isPr.seekg(i);
-
-            if (!getline(isPr, etiq, ':'))                // hace falta??? execption ???
-                return true;
-    //        isPr >> skipws ;
-            etiq=trim_string(etiq) ;
-            if ( ! load(etiq, isPr))             
-                isPr.ignore(1000,'\n')  ;
-        }
-    while (isPr.good() ); 
+    std::string line ;
+    while (std::getline (isPr, line))
+    {
+        std::string    etiq;
+        std::istringstream is_line{line};
+        if (!std::getline(is_line, etiq, ':').good())  continue;
+        etiq=trim_string(etiq) ;
+        load(etiq, is_line);
+    }
     return true;
-
-    //    std::ifstream f("doesn't exist");
-    //try {
-    //    f.exceptions(f.failbit);
-    //} catch (const std::ios_base::failure& e)
-    //{
-    //    std::cout << "Caught an ios_base::failure.\n"
-    //              << "Explanatory string: " << e.what() << '\n'
-    //              << "Error code: " << e.code() << '\n';
-    //}
-    //if ( ! isPr ) return false; //{cerr << "File "<< _ProjetFileName <<" could not be opened "<<endl ; return false;} 
 }
 
 
