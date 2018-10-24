@@ -86,8 +86,8 @@ class Bind_CParamBool : public ProgPBind
  public:				
     Bind_CParamBool (CParamBool &p ):ProgPBind(p){} 
 
-    void updateProg(bool val){ static_cast <CParamBool& >(_p).set  (val); }
-    bool getProgVal(){ return  static_cast <CParamBool& >(_p).get  () ; }
+    void updateProg(bool val){ dynamic_cast  <CParamBool& >(_p).set  (val); }
+    bool getProgVal(){ return  dynamic_cast  <CParamBool& >(_p).get  () ; }
 };
 
 class Bind_CParamString : public ProgPBind  
@@ -98,7 +98,7 @@ class Bind_CParamString : public ProgPBind
     void        updateProg(const std::string&  val){ 
         static_cast <CParamString& >(_p).set (val); }
     std::string getProgVal(               ){ 
-        return  static_cast <CParamString& >(_p).get (  ) ; }
+        return  dynamic_cast  <CParamString& >(_p).get (  ) ; }
 };
 class Bind_CParamC_str : public ProgPBind  
 { 	
@@ -109,7 +109,7 @@ class Bind_CParamC_str : public ProgPBind
         static_cast <CParamC_str& >(_p).Copy     (val); 
     }
     const char* getProgVal(        ){ 
-        return  static_cast <CParamC_str& >(_p).Get      (  ) ; 
+        return  dynamic_cast  <CParamC_str& >(_p).Get      (  ) ;
     }
 };
 class Bind_CParamC_str_TRIM : public Bind_CParamC_str  
@@ -117,7 +117,7 @@ class Bind_CParamC_str_TRIM : public Bind_CParamC_str
  public:				
     Bind_CParamC_str_TRIM (CParamC_str &p ):Bind_CParamC_str(p){} 
 
-    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).CopyTrim (val); }
+    void        updateProg(const char*  val){ dynamic_cast  <CParamC_str& >(_p).CopyTrim (val); }
 };
 
 
@@ -127,9 +127,9 @@ class Bind_CParamRang  : public ProgPBind
  public:				
     Bind_CParamRang (CParamNumRange<Num> &p ):ProgPBind(p){} 
 
-    void updateProg (Num val) { static_cast <CParamNumRange<Num>& >(_p).set  (val); 
+    void updateProg (Num val) { dynamic_cast  <CParamNumRange<Num>& >(_p).set  (val); 
                               }
-    Num  getProgVal (){ return  static_cast <CParamNumRange<Num>& >(_p).get  () ; 
+    Num  getProgVal (){ return  dynamic_cast  <CParamNumRange<Num>& >(_p).get  () ;
                       }
 };
 
@@ -139,9 +139,9 @@ class Bind_CParamEnumRange: public ProgPBind
  public:				
     Bind_CParamEnumRange (CParamEnumRange<enumType> &p ):ProgPBind(p){} 
 
-    void updateProg (const std::string& val) { static_cast <CParamEnumRange<enumType>& >(_p).set  (val); 
+    void updateProg (const std::string& val) { dynamic_cast  <CParamEnumRange<enumType>& >(_p).set  (val); 
                               }
-    std::string  getProgVal (){ return  static_cast <CParamEnumRange<enumType>& >(_p).ToString  () ; 
+    std::string  getProgVal (){ return  dynamic_cast  <CParamEnumRange<enumType>& >(_p).ToString  () ;
                       }
 };
 
