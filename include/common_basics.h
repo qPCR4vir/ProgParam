@@ -100,8 +100,10 @@ inline std::basic_string<_Elem, _Traits, _Alloc> trim_string(const std::basic_st
 {	size_t i,l=str.length() ;
 	if (l)
 	{
-		for ( i=0;  i<l  && isspace(str[i]); ++i );           // salta espacios al principio
-		for ( --l; l>=i  && isspace(str[l]); --l );			// se come espacios al final
+		for ( i=0;  i<l  && isspace(static_cast<unsigned char>(str[i])); ++i )
+			;           // salta espacios al principio
+		for ( --l; l>=i  && isspace(static_cast<unsigned char>(str[i])); --l )
+			;			// se come espacios al final
 		size_t NewLen= l - i +1;
 		if (NewLen>0)					// strncpy(NewStr, &str[i], NewLen) ; 		
 			return str.substr(i,NewLen);
