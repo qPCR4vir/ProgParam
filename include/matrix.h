@@ -286,7 +286,6 @@ public:
                                                            assert(row<totalRow() && col<totalCol()); 
                                                            return _mtx[row][col]    ;
                                                         }
-
     Num    &expand        (index row, index col    ) ;    ///<   Variante de acceso a elemento (row,col) que amplia zona en uso e incluso capacidad si necesario
 
             /// aumenta la capacidad de rows A newRowCap rows
@@ -317,13 +316,17 @@ public:
                                                             _cr=row ; 
                                                             _cc=col;
                                                         }
+
+    auto       get_pos() const                          {
+                                                            return std::tuple<index,index>{_cr, _cc};
+                                                        }
     RowType    NextRow      ()                          {    
                                                             _cc=0; return _mtx[++_cr];
                                                         }
     Num        &Next        ()                          {    
                                                             return expand(_cr,_cc++);    // at (_cr,_cc++);  ??????????????
                                                         }
-    CMatrix_RA& operator >> (Num &num)        const     {    
+    CMatrix_RA& operator >> (Num &num)        const     {
                                                             num    = Next(); 
                                                             return *this ;
                                                         }
