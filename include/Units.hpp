@@ -306,11 +306,11 @@ class CUnit
         CUnit("mm"      , .1    , "cm"                              );
         CUnit("L"       , 1     , ""    ,              "Volumen"    );
         CUnit("L"       , 1000  , "mL"                              );
-        CUnit("mL"      , 1000  , uL                                );
+        CUnit("mL"      , 1000  , uL                                );  // uL = "µL" ??
         CUnit("m3"      , 1000  , "L"                               );
         CUnit("dm3"     , 1     , "L"                               );
         CUnit("cm3"     , 1     , "mL"                              );
-        CUnit("mm3"     , 1     , uL                                );
+        CUnit("mm3"     , 1     , uL                                );  // uL = "µL" ??
         CUnit("s"       , 1     , "s"    ,             "Time"       );
         CUnit("s"       , 1000  , "ms"                              );
         CUnit("min"     , 60    , "s"                               );
@@ -320,7 +320,7 @@ class CUnit
         CUnit("year"    , 365   , "day"                             );
         CUnit("g"       , 0.001 , "kg"   ,             "Mass"       );
         CUnit("g"       , 1000  , "mg"                              );
-        CUnit("mg"      , 1000  , ugr                               );
+        CUnit("mg"      , 1000  , ugr                               );   // ugr = "µgr" ??
         CUnit(ugr        , 1000 , "ng"                              );
         CUnit("ng"      , 1000  , "pg"                              );
         CUnit("pg"      , 1000  , "fg"                              );
@@ -336,8 +336,8 @@ class CUnit
         CUnit("kJ/mol"  , 1000  , "J/mol"                           );
         CUnit("cd"      , 1     , ""     ,             "Luminosity" );
         CUnit("K"       , 1     , ""     ,             "Temperature");
-        CUnit(grC,conversion(1, 273.15), "K"                        );
-        CUnit(grC,conversion(1.8, 32),  grF                         );
+        CUnit(grC,conversion(1, 273.15), "K"                        );     // 
+        CUnit(grC,conversion(1.8, 32),  grF                         );     // 
         //CUnit(u8"°C"    , 1     , "grC"                             );   // why dont work ????
         CUnit("A"       , 1     , ""     ,             "Current"    );
         CUnit("mA"      , 0.001 , "A"                               );
@@ -347,7 +347,7 @@ class CUnit
         CUnit("mol"     , No    , "cop"                             );
         CUnit("mmol"    , 0.001 , "mol"                             );
         CUnit(umol      , 0.001 , "mmol"                            );
-        CUnit("nmol"    , 0.001 , umol                             );
+        CUnit("nmol"    , 0.001 , umol                              );   //
         CUnit("pmol"    , 0.001 , "nmol"                            );
         CUnit("fmol"    , 0.001 , "pmol"                            );
         CUnit("amol"    , 0.001 , "fmol"                            );
@@ -357,20 +357,20 @@ class CUnit
         CUnit("particle", 1     , "cop"                             );
         //CUnit("M"       , 1     , ""    ,             "molarity"  );
         CUnit("M"       , No    , "cop/L" ,             "molarity"  );
-        CUnit(cop_uL    ,1000000, "cop/L"                           );
+        CUnit(cop_uL    ,1000000, "cop/L"                           );    //
         CUnit("M"       , 1     , "mol/L"                           );
         CUnit("M"       , 1000  , "mM"                              );
-        CUnit("mM"      , 1000  , uM                                );
-        CUnit(uM        , 1     , umol_L                            );
-        CUnit(uM        , 1000  , "nM"                              );
+        CUnit("mM"      , 1000  , uM                                );    //
+        CUnit(uM        , 1     , umol_L                            );    //
+        CUnit(uM        , 1000  , "nM"                              );    //
         CUnit("nM"      , 1000  , "pM"                              );
         CUnit("pM"      , 1000  , "fM"                              );
-      //CUnit("pM"      , 1     , u8"µmol/L"                        );
+      //CUnit("pM"      , 1     , u8"µmol/L"                        );    //
         CUnit(umol_L    , 1     , pmol_uL                           );
         CUnit("mg/L"    , 1000  , "g/L" ,            "concentration");
-        CUnit(ugr_L     , 1000  , "mg/L"                            );
+        CUnit(ugr_L     , 1000  , "mg/L"                            );    //
         CUnit("g/mL"    , 1000  , "g/L"                             );
-        CUnit(pgr_uL    , 1     , ugr_L                             );
+        CUnit(pgr_uL    , 1     , ugr_L                             );    //
         CUnit("rad"     , 1     , "m/m"    ,          "angle"       );  // Dimensionless units
         CUnit("x"       , 1     , ""    ,             "fraction"    );
         CUnit("x"       , 100   , "%"                               );
