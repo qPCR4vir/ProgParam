@@ -53,16 +53,16 @@ namespace RTunits  ///< Run-Time defined magnitude untis, convertions, quantitie
 
     /// Portable Unicode Unit names
     const char * const grC     = reinterpret_cast<const char* const> (u8"\u00B0C");   // u8"°C";
-	const char * const grF     = reinterpret_cast<char* const> (u8"\u00B0F");      // u8"°F";
-	const char * const uL      = reinterpret_cast<char* const> (u8"\u00B5L");      // u8"µL";
-	const char * const ugr     = reinterpret_cast<char* const> (u8"\u00B5g");      // u8"µg";
-	const char * const uM      = reinterpret_cast<char* const> (u8"\u00B5M");      // u8"µM";
-	const char * const umol    = reinterpret_cast<char* const> (u8"\u00B5mol");    // u8"µmol";
-	const char * const umol_L  = reinterpret_cast<char* const> (u8"\u00B5mol/L")  ;// µmol/L
-	const char * const pmol_uL = reinterpret_cast<char* const> (u8"pmol/\u00B5L" );// pmol/µL
-	const char * const ugr_L   = reinterpret_cast<char* const> (u8"\u00B5g/L")    ;// µg/L
-	const char * const pgr_uL  = reinterpret_cast<char* const> (u8"pg/\u00B5L" )  ;// pmol/µL
-	const char * const cop_uL  = reinterpret_cast<char* const> (u8"cop/\u00B5L")  ;// cop/µL
+	const char * const grF     = reinterpret_cast<const char* const> (u8"\u00B0F");      // u8"°F";
+	const char * const uL      = reinterpret_cast<const char* const> (u8"\u00B5L");      // u8"µL";
+	const char * const ugr     = reinterpret_cast<const char* const> (u8"\u00B5g");      // u8"µg";
+	const char * const uM      = reinterpret_cast<const char* const> (u8"\u00B5M");      // u8"µM";
+	const char * const umol    = reinterpret_cast<const char* const> (u8"\u00B5mol");    // u8"µmol";
+	const char * const umol_L  = reinterpret_cast<const char* const> (u8"\u00B5mol/L")  ;// µmol/L
+	const char * const pmol_uL = reinterpret_cast<const char* const> (u8"pmol/\u00B5L" );// pmol/µL
+	const char * const ugr_L   = reinterpret_cast<const char* const> (u8"\u00B5g/L")    ;// µg/L
+	const char * const pgr_uL  = reinterpret_cast<const char* const> (u8"pg/\u00B5L" )  ;// pmol/µL
+	const char * const cop_uL  = reinterpret_cast<const char* const> (u8"cop/\u00B5L")  ;// cop/µL
 
     /// Numerical const
     constexpr double No = 6.02e23;
